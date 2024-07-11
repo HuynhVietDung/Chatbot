@@ -15,7 +15,9 @@ from langchain.chains.question_answering import load_qa_chain
 
 
 create_credentials()
-set_default_page()
+if "default_page" not in st.session_state:
+    st.switch_page("main.py")
+    
 st.set_page_config(page_title="Use", page_icon="👨‍🔬", layout="wide")
 navbar = st_navbar(
     ["Home", "Chat", "Search", "Appointment", "Profile", "Logout"],
