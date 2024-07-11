@@ -77,7 +77,7 @@ def register() -> None:
             r"$\textsf{\normalsize Số điện thoại}$:red[$\textsf{\normalsize *}$]",
             type="default",
         )
-        gender = st.radio("Giới tính", ("Nam", "Nữ", "Không tiết lộ"))
+        gender = st.radio(r"$\textsf{\normalsize Giới tính}$:red[$\textsf{\normalsize *}$]", ("Nam", "Nữ", "Không tiết lộ"))
 
         new_pass = st.text_input(
             r"$\textsf{\normalsize Mật khẩu}$:red[$\textsf{\normalsize *}$]",
