@@ -47,7 +47,7 @@ def display(vector_index, chunks):
     genai.configure(api_key=GOOGLE_API_KEY)
 
     df = get_data("Account")
-    use = df[df["ID"] == st.session_state.ID].iloc[0]["Use"]
+    use = int(df[df["ID"] == st.session_state.ID].iloc[0]["Use"])
 
     if use == 1:
         if (
