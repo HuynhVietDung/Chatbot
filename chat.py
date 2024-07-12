@@ -35,8 +35,11 @@ def chatbot():
         genai.configure(api_key=GOOGLE_API_KEY)
 
         df = get_data("Account")
-        use = df[df["ID"] == st.session_state.ID].iloc[0]["Use"]
-
+        try:
+            use = int(df[df["ID"] == st.session_state.ID].iloc[0]["Use"])
+        except:
+            use = 1
+            
         if use == 1:
 
             if (
