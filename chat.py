@@ -9,7 +9,7 @@ from langchain_community.document_loaders.csv_loader import CSVLoader
 from langchain.chains.question_answering import load_qa_chain
 import pandas as pd
 from connect import get_data
-
+from crud import update_use
 
 def chatbot():
     @st.cache_resource
@@ -119,12 +119,13 @@ def chatbot():
                                 "Lưu ý: từ câu hỏi thứ 5, phí 50k/câu. Từ câu thứ 10, phí 100k/ câu"
                             )
                             st.write("Bạn có muốn tiếp tục nữa không ?")
-                            update_user2(PatientID, use=0)
+                            update_use(st.session_state.ID, use=0)
 
                             col_1, col_2 = st.columns(2)
                             k = 0
                             with col_1:
                                 y = st.button("Yes")
+                                update_use(st.session_state.ID, use=1)
                                 if y == True:
                                     k = 1
 
