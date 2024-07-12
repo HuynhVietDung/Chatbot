@@ -22,7 +22,13 @@ def update_account(id, email="", password="") -> None:
 
         if password != "":
             account_sheet.update_cell(row_idx, 3, password)
+            
+def update_usage(id, use) -> None:
+    account_sheet = get_sheet("Account")
 
+    if len(account_sheet.get_all_values()) > 1:
+        row_idx = account_sheet.find(id).row
+        account_sheet.update_cell(row_idx, 4, use)
 
 def find_accountID(email):
     df = get_data("Account")
