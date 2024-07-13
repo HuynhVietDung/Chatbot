@@ -20,6 +20,15 @@ from utils.crud import (
     check_pass
 )
 
+def set_sidebar() -> None:
+    st.sidebar.image("Image/chusoc.jpg", use_column_width=True)
+    st.sidebar.header("DoctorAI-Chuyên gia tư vấn sức khỏe dành cho bạn")
+    st.sidebar.write("Chat trực tiếp với Doctor AI")
+    st.sidebar.title("Các tính năng chính")
+    st.sidebar.title("- Chat")
+    st.sidebar.title("- Tìm kiếm")
+    st.sidebar.title("- Đặt hẹn")
+
 def set_sessionID() -> None:
     if "ID" not in st.session_state:
         st.session_state.ID = None

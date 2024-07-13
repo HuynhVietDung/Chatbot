@@ -9,6 +9,7 @@ from utils.page_functions import (
     set_sessionID,
     set_flag,
     set_default_page,
+    set_sidebar
 )
 
 create_credentials()
@@ -46,10 +47,5 @@ elif navbar == "Login":
             st.session_state.is_login = True
             st.rerun()
 
+set_sidebar()
 
-
-st.sidebar.header("Login")
-st.sidebar.write("Chat trực tiếp với Doctor AI")
-st.sidebar.header("Chat")
-st.sidebar.header("Search")
-st.sidebar.header("Appointment")

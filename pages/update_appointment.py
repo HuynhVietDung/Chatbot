@@ -1,7 +1,7 @@
 import streamlit as st
 from streamlit_navigation_bar import st_navbar
 from utils.connect import get_data
-from utils.page_functions import set_default_page
+from utils.page_functions import set_default_page, set_sidebar
 from utils.crud import update_appointment
 import datetime
 import time
@@ -70,8 +70,4 @@ else:
     set_default_page(navbar)
     st.switch_page("./pages/page1.py")
 
-st.sidebar.header("Login")
-st.sidebar.write("Chat trực tiếp với Doctor AI")
-st.sidebar.header("Chat")
-st.sidebar.header("Search")
-st.sidebar.header("Appointment")
+set_sidebar()

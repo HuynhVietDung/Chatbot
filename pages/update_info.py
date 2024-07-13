@@ -1,6 +1,6 @@
 import streamlit as st
 from streamlit_navigation_bar import st_navbar
-from utils.page_functions import set_default_page
+from utils.page_functions import set_default_page, set_sidebar
 from utils.crud import update_patient_record
 from PIL import Image
 import os
@@ -59,8 +59,4 @@ else:
     set_default_page(navbar)
     st.switch_page("./pages/page1.py")
 
-st.sidebar.header("Login")
-st.sidebar.write("Chat trực tiếp với Doctor AI")
-st.sidebar.header("Chat")
-st.sidebar.header("Search")
-st.sidebar.header("Appointment")
+set_sidebar()

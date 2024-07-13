@@ -2,7 +2,7 @@ import streamlit as st
 from streamlit_navigation_bar import st_navbar
 import pandas as pd
 from utils.connect import get_data, create_credentials
-from utils.page_functions import home, search_drugs, appointment, profile, set_default_page
+from utils.page_functions import home, search_drugs, appointment, profile, set_sidebar
 from utils.crud import filter_appointment, cancel_appointment
 import google.generativeai as genai
 from utils.chat import chatbot
@@ -39,8 +39,4 @@ elif navbar == "Logout":
 elif navbar == "Profile":
     profile()
 
-st.sidebar.header("Login")
-st.sidebar.write("Chat trực tiếp với Doctor AI")
-st.sidebar.header("Chat")
-st.sidebar.header("Search")
-st.sidebar.header("Appointment")
+set_sidebar()
