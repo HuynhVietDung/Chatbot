@@ -10,4 +10,3 @@ chromadb==0.3.29
 gspread
 oauth2client
 bcrypt
-re
