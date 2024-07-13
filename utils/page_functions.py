@@ -115,9 +115,18 @@ def register() -> None:
                 st.warning("Email/Mật khẩu không hợp lệ")
 
 
-def login() -> None:
-    def check(email, password):
-        if password != "" and is_valid_email(email):
+def login() -> None:    
+    # form login
+    placeholder = st.empty()
+    with placeholder.form("login"):
+        st.markdown("### Đăng nhập")
+        email = st.text_input("Email")
+        password = st.text_input("Mật khẩu", type="password")
+        # button submit
+        submit = st.form_submit_button("Đăng nhập")
+        
+    if password != "" and email != "": 
+        if is_valid_email(email):
             # check email
             if is_existed(email):
                 # check password
@@ -136,17 +145,7 @@ def login() -> None:
             else:
                 st.error("Email chưa được đăng ký tài khoản.")
         else:
-            st.error("Email/Mật khẩu không hợp lệ")
-            
-    # form login
-    placeholder = st.empty()
-    with placeholder.form("login"):
-        st.markdown("### Đăng nhập")
-        email = st.text_input("Email")
-        password = st.text_input("Mật khẩu", type="password")
-        # button submit
-        submit = st.form_submit_button("Đăng nhập", on_click=check, args=[email, password])
-
+            st.error("Email không hợp lệ")
 
 def search_drugs() -> None:
     def find_drug(df, text_search):
