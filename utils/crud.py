@@ -1,4 +1,5 @@
 from utils.connect import get_sheet, get_data
+import re
 import pandas as pd
 import bcrypt
 
@@ -30,7 +31,7 @@ def update_use(id, use) -> None:
         row_idx = account_sheet.find(id).row
         account_sheet.update_cell(row_idx, 4, use)
 
-def find_accountID(email):
+def find_accountID(email) -> str:
     df = get_data("Account")
     return df[df["Email"] == email].iloc[0]["ID"]
 
@@ -39,13 +40,12 @@ def is_existed(email, df=pd.DataFrame()):
     df = get_data("Account") if df.empty else df
     return email in df["Email"].values
 
+def is_valid_email(pw: str) -> bool:
+    return re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', pw)
 
 def get_password(email):
     df = get_data("Account")
-    if not is_existed(email, df):
-        return 0
-    else:
-        return df[df["Email"] == email].iloc[0]["Password"]
+    return df[df["Email"] == email].iloc[0]["Password"]
 
 def hash_pass(password: str):
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
@@ -56,7 +56,7 @@ def check_pass(new_pw: str, old_pw:str):
 
 ######################## Patient ########################
 def create_patient_record(
-    id, email, name, age="", phone="", gender="Male", image=""
+    id, email, name, age="", phone="", gender="Nam", image=""
 ) -> None:
     patient_sheet = get_sheet("Patient")
     idx = len(patient_sheet.get_all_values()) + 1

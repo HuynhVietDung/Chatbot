@@ -13,6 +13,7 @@ from utils.crud import (
     cancel_appointment,
     filter_appointment,
     is_existed,
+    is_valid_email,
     find_accountID,
     get_password,
     hash_pass,
@@ -23,6 +24,9 @@ def set_sessionID() -> None:
     if "ID" not in st.session_state:
         st.session_state.ID = None
 
+def set_flag():
+    if "is_login" not in st.session_state:
+        st.session_state.is_login = True
 
 def set_default_page(page="Home") -> None:
     if "default_page" not in st.session_state:
@@ -97,7 +101,7 @@ def register() -> None:
         # button submit
         submit = st.form_submit_button("Đăng ký")
         if submit:
-            if not is_existed(email2) and "@gmail.com" in email2 and flag:
+            if not is_existed(email2) and is_valid_email(email2) and flag:
                 time.sleep(0.5)
                 hash_pw = hash_pass(password)
                 create_account(id, email2, hash_pw)
@@ -121,30 +125,27 @@ def login() -> None:
         # button submit
         submit = st.form_submit_button("Đăng nhập")
 
-    # check status
-    if password != "" or email != "":
-        # check account
-        actual_pass = get_password(email)
 
-        if actual_pass != 0:
+    if password != "" and is_valid_email(email):
+        # check email
+        if is_existed(email):
+            # check password
+            actual_pass = get_password(email)
+
             # encode password
             if check_pass(password, actual_pass):
                 st.success("Đăng nhập thành công")
                 user_id = find_accountID(email)
-                # print(user_id)
-                # update_historylogs(user_id, email, str(time.localtime()))
-                # placeholder = st.empty()
                 time.sleep(0.5)
 
                 st.session_state.ID = user_id
                 st.switch_page("./pages/page1.py")
             else:
-                st.warning("Password/Email không hợp lệ")
-
+                st.error("Email/Mật khẩu không đúng.")
         else:
-            st.warning("Password/Email không hợp lệ")
-
-    register()
+            st.error("Email chưa được đăng ký tài khoản.")
+    else:
+        st.error("Email/Mật khẩu không hợp lệ")
 
 
 def search_drugs() -> None:
