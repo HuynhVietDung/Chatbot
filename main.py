@@ -32,9 +32,7 @@ elif navbar == "Appointment":
 
 elif navbar == "Login":
     set_flag()
-    flag = st.session_state.is_login
-
-    if flag:
+    if st.session_state.is_login:
         login()
         if st.button("Chưa có tài khoản. Đăng ký ngay"):
             st.session_state.is_login = False
