@@ -35,7 +35,7 @@ def home() -> None:
     st.header("Doctor AI - Trợ Lý Sức Khỏe Cá Nhân Của Bạn")
     st.markdown(
         f'<div style="display: flex; justify-content: center;">'
-        f'<img src="{"./Image/chatbot"}" style="width: 50%; height: auto;" />'
+        f'<img src="{"../Image/chatbot"}" style="width: 50%; height: auto;" />'
         f'</div>',
         unsafe_allow_html=True
     )    
