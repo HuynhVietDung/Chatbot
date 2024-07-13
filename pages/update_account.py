@@ -3,7 +3,7 @@ from streamlit_navigation_bar import st_navbar
 import pandas as pd
 from connect import get_data
 from page_functions import set_default_page
-from crud import update_account
+from crud import update_account, hash_pass, check_pass
 from PIL import Image
 import os
 import time
@@ -43,7 +43,8 @@ elif navbar == "Profile":
             st.warning("Mật khẩu không khớp.")
 
         if st.form_submit_button("Xác nhận"):
-            if old_pass == user_pw and password == new_pass:
+            if check_pass(old_pass, user_pw) and password == new_pass:
+                password = hash_pass(password)
                 update_account(id=st.session_state.ID, password=password)
                 st.success("Thay đổi mật khẩu thành công")
                 time.sleep(1)

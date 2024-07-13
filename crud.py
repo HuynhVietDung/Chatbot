@@ -45,10 +45,13 @@ def get_password(email):
     if not is_existed(email, df):
         return 0
     else:
-        return bcrypt.hashpw(
-            df[df["Email"] == email].iloc[0]["Password"].encode("utf-8"),
-            bcrypt.gensalt(),
-        )
+        return df[df["Email"] == email].iloc[0]["Password"]
+
+def hash_pass(password: str):
+    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+def check_pass(new_pw: str, old_pw:str):
+    return bcrypt.checkpw(new_pw.encode('utf-8'), old_pw.encode('utf-8'))
 
 
 ######################## Patient ########################

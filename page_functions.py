@@ -16,8 +16,10 @@ from crud import (
     is_existed,
     find_accountID,
     get_password,
+    hash_pass,
+    check_pass
 )
-
+import pandas as pd
 
 def set_sessionID() -> None:
     if "ID" not in st.session_state:
@@ -79,25 +81,28 @@ def register() -> None:
         )
         gender = st.radio(r"$\textsf{\normalsize Giới tính}$:red[$\textsf{\normalsize *}$]", ("Nam", "Nữ", "Không tiết lộ"))
 
-        new_pass = st.text_input(
+        password = st.text_input(
             r"$\textsf{\normalsize Mật khẩu}$:red[$\textsf{\normalsize *}$]",
             type="password",
         )
 
-        password = st.text_input(
+        password_2 = st.text_input(
             r"$\textsf{\normalsize Nhập lại mật khẩu}$:red[$\textsf{\normalsize *}$]",
             type="password",
         )
 
-        if password != new_pass:
+        flag = True
+        if password != password_2:
             st.warning("Mật khẩu không khớp.")
+            flag = False
 
         # button submit
         submit = st.form_submit_button("Đăng ký")
         if submit:
-            if not is_existed(email2) and "@gmail.com" in email2:
+            if not is_existed(email2) and "@gmail.com" in email2 and flag:
                 time.sleep(0.5)
-                create_account(id, email2, password)
+                hash_pw = hash_pass(password)
+                create_account(id, email2, hash_pw)
                 create_patient_record(id, email2, name, age, phone, gender)
 
                 st.session_state.ID = id
@@ -105,7 +110,7 @@ def register() -> None:
                 st.switch_page("./pages/page1.py")
 
             else:
-                st.warning("Email không hợp lệ")
+                st.warning("Email/Mật khẩu không hợp lệ")
 
 
 def login() -> None:
@@ -122,11 +127,10 @@ def login() -> None:
     if password != "" or email != "":
         # check account
         actual_pass = get_password(email)
-        print("actual_pass:", actual_pass)
 
         if actual_pass != 0:
             # encode password
-            if bcrypt.checkpw(password.encode(), actual_pass):
+            if check_pass(password, actual_pass):
                 st.success("Đăng nhập thành công")
                 user_id = find_accountID(email)
                 # print(user_id)
