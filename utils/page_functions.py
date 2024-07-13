@@ -33,12 +33,7 @@ def set_default_page(page="Home") -> None:
 
 def home() -> None:
     st.header("Doctor AI - Trợ Lý Sức Khỏe Cá Nhân Của Bạn")
-    st.markdown(
-        f'<div style="display: flex; justify-content: center;">'
-        f'<img src="{"Image/chatbot.jpg"}" style="width: 50%; height: auto;" />'
-        f'</div>',
-        unsafe_allow_html=True
-    )    
+    st.image("Image/chatbot.jpg", output_format="auto")    
     st.write(
         "Mô Tả: Đưa sức khỏe của bạn vào tay của công nghệ với Doctor AI - chatbot y tế tiên tiến nhất, hỗ trợ bạn từ việc chẩn đoán ban đầu đến quản lý bệnh mãn tính."
     )
