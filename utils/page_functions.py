@@ -1,16 +1,15 @@
 import streamlit as st
 from streamlit_navigation_bar import st_navbar
-import bcrypt
+import pandas as pd
 import time
 import datetime
 import random
 import string
-from connect import get_data
-from crud import (
+from utils.connect import get_data
+from utils.crud import (
     create_patient_record,
     create_account,
     create_appointment,
-    update_appointment,
     cancel_appointment,
     filter_appointment,
     is_existed,
@@ -19,7 +18,6 @@ from crud import (
     hash_pass,
     check_pass
 )
-import pandas as pd
 
 def set_sessionID() -> None:
     if "ID" not in st.session_state:
@@ -35,7 +33,12 @@ def set_default_page(page="Home") -> None:
 
 def home() -> None:
     st.header("Doctor AI - Trợ Lý Sức Khỏe Cá Nhân Của Bạn")
-    st.image("Image/chatbot.jpg", output_format="auto")
+    st.markdown(
+        f'<div style="display: flex; justify-content: center;">'
+        f'<img src="{"./Image/chatbot"}" style="width: 50%; height: auto;" />'
+        f'</div>',
+        unsafe_allow_html=True
+    )    
     st.write(
         "Mô Tả: Đưa sức khỏe của bạn vào tay của công nghệ với Doctor AI - chatbot y tế tiên tiến nhất, hỗ trợ bạn từ việc chẩn đoán ban đầu đến quản lý bệnh mãn tính."
     )

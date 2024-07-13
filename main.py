@@ -1,7 +1,7 @@
 import streamlit as st
 from streamlit_navigation_bar import st_navbar
-from connect import create_credentials
-from page_functions import (
+from utils.connect import create_credentials
+from utils.page_functions import (
     home,
     search_drugs,
     login,

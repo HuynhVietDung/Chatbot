@@ -7,9 +7,8 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.document_loaders.csv_loader import CSVLoader
 from langchain.chains.question_answering import load_qa_chain
-import pandas as pd
-from connect import get_data
-from crud import update_use
+from utils.connect import get_data
+from utils.crud import update_use
 
 def chatbot():
     @st.cache_resource

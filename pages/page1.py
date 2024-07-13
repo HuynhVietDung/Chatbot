@@ -1,11 +1,11 @@
 import streamlit as st
 from streamlit_navigation_bar import st_navbar
 import pandas as pd
-from connect import get_data, create_credentials
-from page_functions import home, search_drugs, appointment, profile, set_default_page
-from crud import filter_appointment, cancel_appointment
+from utils.connect import get_data, create_credentials
+from utils.page_functions import home, search_drugs, appointment, profile, set_default_page
+from utils.crud import filter_appointment, cancel_appointment
 import google.generativeai as genai
-from chat import chatbot
+from utils.chat import chatbot
 
 
 create_credentials()

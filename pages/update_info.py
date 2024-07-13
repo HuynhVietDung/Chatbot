@@ -1,9 +1,7 @@
 import streamlit as st
 from streamlit_navigation_bar import st_navbar
-import pandas as pd
-from connect import get_data
-from page_functions import set_default_page
-from crud import update_patient_record
+from utils.page_functions import set_default_page
+from utils.crud import update_patient_record
 from PIL import Image
 import os
 import time

@@ -1,4 +1,4 @@
-from connect import get_sheet, get_data
+from utils.connect import get_sheet, get_data
 import pandas as pd
 import bcrypt
 
