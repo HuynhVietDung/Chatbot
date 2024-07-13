@@ -7,7 +7,7 @@ langchain-community
 langchain-google-genai
 sentence-transformers
 chromadb==0.3.29
-openpyxl
 gspread
 oauth2client
 bcrypt
+re
