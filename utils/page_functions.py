@@ -116,6 +116,28 @@ def register() -> None:
 
 
 def login() -> None:
+    def check(email, password):
+        if password != "" and is_valid_email(email):
+            # check email
+            if is_existed(email):
+                # check password
+                actual_pass = get_password(email)
+    
+                # encode password
+                if check_pass(password, actual_pass):
+                    st.success("Đăng nhập thành công")
+                    user_id = find_accountID(email)
+                    time.sleep(0.5)
+    
+                    st.session_state.ID = user_id
+                    st.switch_page("./pages/page1.py")
+                else:
+                    st.error("Email/Mật khẩu không đúng.")
+            else:
+                st.error("Email chưa được đăng ký tài khoản.")
+        else:
+            st.error("Email/Mật khẩu không hợp lệ")
+            
     # form login
     placeholder = st.empty()
     with placeholder.form("login"):
@@ -123,29 +145,7 @@ def login() -> None:
         email = st.text_input("Email")
         password = st.text_input("Mật khẩu", type="password")
         # button submit
-        submit = st.form_submit_button("Đăng nhập")
-
-
-    if password != "" and is_valid_email(email):
-        # check email
-        if is_existed(email):
-            # check password
-            actual_pass = get_password(email)
-
-            # encode password
-            if check_pass(password, actual_pass):
-                st.success("Đăng nhập thành công")
-                user_id = find_accountID(email)
-                time.sleep(0.5)
-
-                st.session_state.ID = user_id
-                st.switch_page("./pages/page1.py")
-            else:
-                st.error("Email/Mật khẩu không đúng.")
-        else:
-            st.error("Email chưa được đăng ký tài khoản.")
-    else:
-        st.error("Email/Mật khẩu không hợp lệ")
+        submit = st.form_submit_button("Đăng nhập", on_click=check, args=[email, password])
 
 
 def search_drugs() -> None:
