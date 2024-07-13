@@ -124,7 +124,7 @@ def register() -> None:
                 st.warning("Email/Mật khẩu không hợp lệ")
 
 
-def login() -> None:
+def login() -> None:    
     # form login
     placeholder = st.empty()
     with placeholder.form("login"):
@@ -133,29 +133,28 @@ def login() -> None:
         password = st.text_input("Mật khẩu", type="password")
         # button submit
         submit = st.form_submit_button("Đăng nhập")
-
-
-    if password != "" and is_valid_email(email):
-        # check email
-        if is_existed(email):
-            # check password
-            actual_pass = get_password(email)
-
-            # encode password
-            if check_pass(password, actual_pass):
-                st.success("Đăng nhập thành công")
-                user_id = find_accountID(email)
-                time.sleep(0.5)
-
-                st.session_state.ID = user_id
-                st.switch_page("./pages/page1.py")
+        
+    if password != "" and email != "": 
+        if is_valid_email(email):
+            # check email
+            if is_existed(email):
+                # check password
+                actual_pass = get_password(email)
+    
+                # encode password
+                if check_pass(password, actual_pass):
+                    st.success("Đăng nhập thành công")
+                    user_id = find_accountID(email)
+                    time.sleep(0.5)
+    
+                    st.session_state.ID = user_id
+                    st.switch_page("./pages/page1.py")
+                else:
+                    st.error("Email/Mật khẩu không đúng.")
             else:
-                st.error("Email/Mật khẩu không đúng.")
+                st.error("Email chưa được đăng ký tài khoản.")
         else:
-            st.error("Email chưa được đăng ký tài khoản.")
-    else:
-        st.error("Email/Mật khẩu không hợp lệ")
-
+            st.error("Email không hợp lệ")
 
 def search_drugs() -> None:
     def find_drug(df, text_search):
