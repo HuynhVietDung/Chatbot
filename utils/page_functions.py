@@ -162,10 +162,7 @@ def search_drugs() -> None:
             return df_search
         return pd.DataFrame()
 
-    st.markdown(
-        "<h1 style='text-align: center; color: black;'>Công Cụ Tìm Kiếm Thuốc</h1>",
-        unsafe_allow_html=True,
-    )
+    st.header("Công Cụ Tìm Kiếm Thuốc")
 
     # Connect to the drug dataset
     df = get_data("Drug")
