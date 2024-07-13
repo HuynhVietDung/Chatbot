@@ -54,6 +54,7 @@ def home() -> None:
     st.write(
         "Doctor AI là một chatbot y tế thông minh, được thiết kế để cung cấp cho bạn các lời khuyên y tế chính xác và kịp thời. Với sự hỗ trợ của công nghệ AI tiên tiến, Doctor AI có khả năng chẩn đoán các triệu chứng ban đầu, cung cấp thông tin về các bệnh lý và giúp quản lý các bệnh mãn tính."
     )
+    st.image("Image/chatbot2.jpg", output_format="auto")
     st.header("Những Tính Năng Nổi Bật của Doctor AI")
     st.write(
         "+ Chẩn Đoán Ban Đầu: Phân tích các triệu chứng và đưa ra các dự đoán về bệnh lý có thể mắc phải."
@@ -65,11 +66,13 @@ def home() -> None:
     st.write(
         "Doctor AI sử dụng công nghệ AI tiên tiến để phân tích dữ liệu y tế từ người dùng. Bạn chỉ cần nhập các triệu chứng hoặc câu hỏi của mình, Doctor AI sẽ phân tích và cung cấp câu trả lời chính xác nhất."
     )
-    st.header("Contact")
+    st.image("Image/chatbot3.jpg", output_format="auto")
+
+    st.header("Liên hệ ")
     st.image("Image/chusoc.jpg", width=200)
     st.write("Bác sĩ online")
     st.write("Email: lapduanviet@gmail.com")
-    st.write("Phone: 0918755356")
+    st.write("Số điện thoại: 0918755356")
 
 
 def register() -> None:
