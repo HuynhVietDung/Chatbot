@@ -2,8 +2,6 @@ import streamlit as st
 import webbrowser
 import stripe
 
-
-
 def payment():
     col1, col2 = st.columns(2)
     with col1:
@@ -43,7 +41,7 @@ def payment():
 
 
 def create_payment_link_week(amount, currency='vnd'):
-    stripe.api_key = 'sk_test_51PcNmXJ4I1BJ2PKGRJcR7wMhL9H1LWtb1tnSclOaeM88GgkGF9g3R8FCMtASv11UfrtFCx1IqdobPsGkQTrOHKNG00LxCqyjMp'
+    stripe.api_key = st.secrets["stripe_api_key"]
 
     product = stripe.Product.create(name='Gói đăng ký tuần')
         
@@ -69,7 +67,7 @@ def create_payment_link_week(amount, currency='vnd'):
     return payment_link['url']
 
 def create_payment_link_mothly(amount, currency='vnd'):
-    stripe.api_key = 'sk_test_51PcNmXJ4I1BJ2PKGRJcR7wMhL9H1LWtb1tnSclOaeM88GgkGF9g3R8FCMtASv11UfrtFCx1IqdobPsGkQTrOHKNG00LxCqyjMp'
+    stripe.api_key = st.secrets["stripe_api_key"]
 
     product = stripe.Product.create(name='Gói đăng ký tuần')
         
