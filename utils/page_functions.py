@@ -418,17 +418,17 @@ def profile() -> None:
         appointment = filter_appointment(st.session_state.ID)
 
         if not appointment.empty:
-            col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 2, 3, 1, 1])
+            with st.container():
+                col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 2, 3, 1, 1])
 
-            # write Header
-            col1.write("ID")
-            col2.write("Bác sĩ")
-            col3.write("Thời gian")
-            col4.write("Mô tả")
-            st.write("___" * 20)
+                # write Header
+                col1.write("ID")
+                col2.write("Bác sĩ")
+                col3.write("Thời gian")
+                col4.write("Mô tả")
+                
 
             # write contents
-            col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 2, 3, 1, 1])
             # Custom CSS to adjust spacing between elements
             st.markdown(
                 """
@@ -442,37 +442,40 @@ def profile() -> None:
             )
 
             for i, row in appointment.iterrows():
-                col1.markdown(
-                    f'<div class="custom-row-space">{row["ID"]}</div>',
-                    unsafe_allow_html=True,
-                )
-                col2.markdown(
-                    f'<div class="custom-row-space">{find_doctor_name(row["DoctorID"])}</div>',
-                    unsafe_allow_html=True,
-                )
-                col3.markdown(
-                    f'<div class="custom-row-space">{row["Time"]}</div>',
-                    unsafe_allow_html=True,
-                )
-                col4.markdown(
-                    f'<div class="custom-row-space">{row["Description"]}</div>',
-                    unsafe_allow_html=True,
-                )
+                with st.container:
+                # write contents
+                    col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 2, 3, 1, 1])
+                    col1.markdown(
+                        f'<div class="custom-row-space">{row["ID"]}</div>',
+                        unsafe_allow_html=True,
+                    )
+                    col2.markdown(
+                        f'<div class="custom-row-space">{find_doctor_name(row["DoctorID"])}</div>',
+                        unsafe_allow_html=True,
+                    )
+                    col3.markdown(
+                        f'<div class="custom-row-space">{row["Time"]}</div>',
+                        unsafe_allow_html=True,
+                    )
+                    col4.markdown(
+                        f'<div class="custom-row-space">{row["Description"]}</div>',
+                        unsafe_allow_html=True,
+                    )
 
-                with col5:
-                    change_but = st.button("Thay đổi", key=i)
-                    if change_but:
-                        if "app_id" not in st.session_state:
-                            st.session_state.app_id = row["ID"]
-                        if "app_doctor_id" not in st.session_state:
-                            st.session_state.app_doctor_id = row["DoctorID"]
-                        st.switch_page("./pages/update_appointment.py")
+                    with col5:
+                        change_but = st.button("Thay đổi", key=i)
+                        if change_but:
+                            if "app_id" not in st.session_state:
+                                st.session_state.app_id = row["ID"]
+                            if "app_doctor_id" not in st.session_state:
+                                st.session_state.app_doctor_id = row["DoctorID"]
+                            st.switch_page("./pages/update_appointment.py")
 
-                with col6:
-                    del_but = st.button("Hủy", key=row["ID"])
-                    if del_but:
-                        cancel_appointment(row["ID"])
-                        st.experimental_rerun()
+                    with col6:
+                        del_but = st.button("Hủy", key=row["ID"])
+                        if del_but:
+                            cancel_appointment(row["ID"])
+                            st.experimental_rerun()
 
         else:
             st.write("Hiện không có lịch hẹn nào")
