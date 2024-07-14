@@ -168,8 +168,10 @@ def search_drugs() -> None:
             df_search = df[m1 | m2]
             return df_search
         return pd.DataFrame()
-
-    st.header("Công Cụ Tìm Kiếm Thuốc")
+    
+    col1, col2, col3 = st.columns([3,3,2])
+    with col2:
+        st.header("Công Cụ Tìm Kiếm Thuốc")
 
     # Connect to the drug dataset
     df = get_data("Drug")
@@ -222,15 +224,9 @@ def appointment() -> None:
     def select_day(day):
         st.session_state["selected_day"] = day
     
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3 = st.columns([3,3,2])
     with col2:
-        """
-            st.markdown(
-                "<h1 style='text-align: center; color: black;'>Đặt Lịch Hẹn Bác Sĩ</h1>",
-                unsafe_allow_html=True,
-            )
-        """
-        st.header("Đặt Lịch Hẹn Bác Sĩ")
+        st.title("Đặt Lịch Hẹn Bác Sĩ")
 
     df = get_data("Doctor")
 
