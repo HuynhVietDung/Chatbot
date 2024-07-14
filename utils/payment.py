@@ -22,7 +22,7 @@ def payment():
                 # st.write("✔️ Trả lời câu hỏi không giới hạn trong 1 tuần")
                 # st.write(f"✔️ Khuyến mãi 10% cho những lần đăng ký sau")
                 st.write(df.iloc[i]["Description"])
-                st.write(f"Giá: {df.iloc[i]["Price"]}")
+                st.write(f"Giá: {df.iloc[i]['Price']}")
                 submit = st.form_submit_button("Mua")
                 if submit:
                     url = df.iloc[i]["Link"]
