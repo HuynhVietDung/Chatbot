@@ -21,13 +21,13 @@ from utils.crud import (
 )
 
 def set_sidebar() -> None:
-    st.sidebar.image("Image/chusoc.jpg", use_column_width=True)
-    st.sidebar.header("DoctorAI-Chuyên gia tư vấn sức khỏe dành cho bạn")
+    st.sidebar.image("Image/chusoc.jpg", width=200)
+    st.sidebar.title("DoctorAI - Chuyên gia tư vấn sức khỏe dành cho bạn")
     st.sidebar.write("Chat trực tiếp với Doctor AI")
-    st.sidebar.title("Các tính năng chính")
-    st.sidebar.title("- Chat")
-    st.sidebar.title("- Tìm kiếm")
-    st.sidebar.title("- Đặt hẹn")
+    st.sidebar.header("Các tính năng chính")
+    st.sidebar.header("- Chat")
+    st.sidebar.header("- Tìm kiếm")
+    st.sidebar.header("- Đặt hẹn")
 
 def set_sessionID() -> None:
     if "ID" not in st.session_state:
@@ -42,7 +42,7 @@ def set_default_page(page="Home") -> None:
         st.session_state.default_page = page
     else:
         st.session_state.default_page = page
-
+    
 
 def home() -> None:
     st.header("Doctor AI - Trợ Lý Sức Khỏe Cá Nhân Của Bạn")
@@ -221,11 +221,16 @@ def appointment() -> None:
 
     def select_day(day):
         st.session_state["selected_day"] = day
-
-    st.markdown(
-        "<h1 style='text-align: center; color: black;'>Đặt Lịch Hẹn Bác Sĩ</h1>",
-        unsafe_allow_html=True,
-    )
+    
+    col1, col2, col3 = st.columns(3)
+    with col2:
+        """
+            st.markdown(
+                "<h1 style='text-align: center; color: black;'>Đặt Lịch Hẹn Bác Sĩ</h1>",
+                unsafe_allow_html=True,
+            )
+        """
+        st.header("Đặt Lịch Hẹn Bác Sĩ")
 
     df = get_data("Doctor")
 

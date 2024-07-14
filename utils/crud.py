@@ -5,11 +5,11 @@ import bcrypt
 
 
 ######################## Account ########################
-def create_account(id, email, password) -> None:
+def create_account(id, email, password, role= "user") -> None:
     account_sheet = get_sheet("Account")
 
     idx = len(account_sheet.get_all_values()) + 1
-    account_sheet.insert_row([id, email, password, 1], idx)
+    account_sheet.insert_row([id, email, password, 1, role], idx)
 
 
 def update_account(id, email="", password="") -> None:
