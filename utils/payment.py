@@ -18,61 +18,18 @@ def payment():
                 st.header(f"**{df.iloc[i]['Name']}**")
                 
                 features = df.iloc[i]['Description'].split("✔️ ")
-                # st.write("✔️ Tư vấn y tế cơ bản")
-                # st.write("✔️ Theo dõi triệu chứng")
-                # st.write("✔️ Lập kế hoạch sức khỏe cá nhân")
-                # st.write("✔️ Cảnh báo sức khỏe")
-                # st.write("✔️ Trả lời câu hỏi không giới hạn trong 1 tuần")
-                # st.write(f"✔️ Khuyến mãi 10% cho những lần đăng ký sau")
                 
-                for feature in features:
-                    st.write(feature)
+                for feature in features[1:]:
+                    st.write("✔️ " + feature)
 
                 st.write(f"Giá: {df.iloc[i]['Price']}")
 
                 submit = st.form_submit_button("Mua")
                 if submit:
                     url = df.iloc[i]["Link"]
-                    try:
-                        webbrowser.open_new_tab(url)
-                    except:
-                        st.error("Hiện không thể mở link.")
-           
+                    
+                    webbrowser.open_new_tab(url)
         
-        # with col2:
-        #     placeholder = st.empty()
-        #     with placeholder.form("Gói đăng ký tháng"):
-        #         # st.write("**Gói đăng ký tháng**")
-        #         # st.write("✔️ Tư vấn y tế chuyên sâu")
-        #         # st.write("✔️ Theo dõi sức khỏe toàn diện")
-        #         # st.write("✔️ Nhắc nhở uống thuốc và kiểm tra định kì")
-        #         # st.write("✔️ Cảnh báo sức khỏe và hỗ trợ khẩn cấp")
-        #         # st.write("✔️ Tư vấn dinh dưỡng và lối sống lành mạnh")
-        #         # st.write("✔️ Trả lời câu hỏi không giới hạn trong 1 tháng")
-        #         # st.write(f"✔️ Khuyến mãi 20% cho những lần đăng ký sau")
-        #         st.write(f"Giá: {price_2}")
-        #         submit = st.form_submit_button("Mua")
-        #         if submit:
-        #             url = url_2
-        #             webbrowser.open_new_tab(url)
-                        
-        # with col3:
-        #     placeholder = st.empty()
-        #     with placeholder.form("Gói đăng ký năm"):
-        #         # st.write("**Gói đăng ký năm**")
-        #         # st.write("✔️ Tư vấn y tế chi tiết")
-        #         # st.write("✔️ Theo dõi sức khỏe toàn diện")
-        #         # st.write("✔️ Nhắc nhở uống thuốc và kiểm tra định kì")
-        #         # st.write("✔️ Lập kế hoạch sức khỏe cá nhân hóa")
-        #         # st.write("✔️ Cảnh báo sức khỏe và hỗ trợ khẩn cấp")
-        #         # st.write("✔️ Tư vấn dinh dưỡng và lối sống lành mạnh")
-        #         # st.write("✔️ Trả lời câu hỏi không giới hạn trong 1 năm")
-        #         # st.write(f"✔️ Khuyến mãi 30% cho những lần đăng ký sau")
-        #         st.write(f"Giá: {price_3}")
-        #         submit = st.form_submit_button("Mua")
-        #         if submit:
-        #             url = url_3
-        #             webbrowser.open_new_tab(url)
 
 
 def get_infor_customer():
