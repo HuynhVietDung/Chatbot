@@ -18,8 +18,12 @@ from utils.crud import (
     update_account,
     get_password,
     hash_pass,
-    check_pass, 
-    find_doctor_name
+    check_pass,
+    find_doctor_name,
+    find_role,
+    create_package,
+    delete_package,
+    create_doctor
 )
 
 def set_sidebar() -> None:
@@ -90,16 +94,16 @@ def register() -> None:
         characters = string.ascii_letters + string.digits
         id = "".join(random.choice(characters) for i in range(8))
         name = st.text_input(
-            r"$\textsf{\normalsize Tên}]", type="default"
+            r"$\textsf{\normalsize Tên}$", type="default"
         )
         age = st.text_input(
-            r"$\textsf{\normalsize Tuổi}]", type="default"
+            r"$\textsf{\normalsize Tuổi}$", type="default"
         )
         phone = st.text_input(
-            r"$\textsf{\normalsize Số điện thoại}]",
+            r"$\textsf{\normalsize Số điện thoại}$",
             type="default",
         )
-        gender = st.radio(r"$\textsf{\normalsize Giới tính}]", ("Nam", "Nữ", "Không tiết lộ"))
+        gender = st.radio(r"$\textsf{\normalsize Giới tính}$", ("Nam", "Nữ", "Không tiết lộ"))
 
         password = st.text_input(
             r"$\textsf{\normalsize Mật khẩu}$:red[$\textsf{\normalsize *}$]",
@@ -192,7 +196,10 @@ def login() -> None:
                     time.sleep(0.5)
     
                     st.session_state.ID = user_id
-                    st.switch_page("./pages/page1.py")
+                    if find_role(user_id) == "admin":
+                        st.switch_page("./pages/admin.py")
+                    else:
+                        st.switch_page("./pages/page1.py")
                 else:
                     st.error("Email/Mật khẩu không đúng.")
             else:
@@ -515,10 +522,190 @@ def profile() -> None:
                         del_but = st.button("Hủy", key=row["ID"])
                         if del_but:
                             cancel_appointment(row["ID"])
-                            st.experimental_rerun()
+                            st.rerun()
 
         else:
             st.write("Hiện không có lịch hẹn nào")
     else:
         st.session_state.clear()
         st.switch_page("main.py")
+
+
+def add_package_form():
+    placeholder = st.empty()
+    with placeholder.form("Thêm gói"):
+        st.markdown("### Thêm gói")
+        name = st.text_input(r"$\textsf{\normalsize Tên gói}$:red[$\textsf{\normalsize *}$]")
+
+        characters = string.ascii_letters + string.digits
+        id = "".join(random.choice(characters) for i in range(8))
+
+        price = st.text_input(
+            r"$\textsf{\normalsize Giá gói}$", type="default"
+        )
+        description = st.text_input(
+            r"$\textsf{\normalsize Mô tả tính năng}$", type="default"
+        )
+        
+        link = ""
+
+        # button submit
+        submit = st.form_submit_button("Thêm")
+        if submit:
+            create_package(id, name, price, description, link)
+            st.rerun()
+
+
+def delete_package_form():
+    package = get_data("Package")
+
+    if not package.empty:
+        with st.container():
+            col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 2, 3, 1, 1])
+
+            # write Header
+            col1.write("ID")
+            col2.write("Tên gói")
+            col3.write("Giá")
+            col4.write("Mô tả")
+            col5.write("Link")
+                        
+
+        # write contents
+        # Custom CSS to adjust spacing between elements
+        st.markdown(
+            """
+            <style>
+            .custom-row-space {
+                margin-bottom: 30px; /* Adjust this value to increase/decrease space */
+            }
+            </style>
+        """,
+            unsafe_allow_html=True,
+        )
+
+        for i, row in package.iterrows():
+            with st.container():
+            # write contents
+                col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 2, 3, 1, 1])
+                col1.markdown(
+                    f'<div class="custom-row-space">{row["ID"]}</div>',
+                    unsafe_allow_html=True,
+                )
+                col2.markdown(
+                    f'<div class="custom-row-space">{row["Name"]}</div>',
+                    unsafe_allow_html=True,
+                )
+                col3.markdown(
+                    f'<div class="custom-row-space">{row["Price"]}</div>',
+                    unsafe_allow_html=True,
+                )
+                col4.markdown(
+                    f'<div class="custom-row-space">{row["Description"]}</div>',
+                    unsafe_allow_html=True,
+                )
+
+                col5.markdown(
+                    f'<div class="custom-row-space">{row["Link"]}</div>',
+                    unsafe_allow_html=True,
+                )
+
+                with col6:
+                    del_but = st.button("Hủy", key=row["ID"])
+                    if del_but:
+                        delete_package(row["ID"])
+                        st.rerun()
+
+    else:
+        st.write("Hiện không có gói nào")
+
+def add_admin():
+    # form dang ky
+    placeholder = st.empty()
+    with placeholder.form("Chưa có tài khoản"):
+        st.markdown("### Đăng ký")
+        email2 = st.text_input(r"$\textsf{\normalsize Email}$:red[$\textsf{\normalsize *}$]")
+
+        characters = string.ascii_letters + string.digits
+        id = "".join(random.choice(characters) for i in range(8))
+        name = st.text_input(
+            r"$\textsf{\normalsize Tên}$", type="default"
+        )
+        age = st.text_input(
+            r"$\textsf{\normalsize Tuổi}$", type="default"
+        )
+        phone = st.text_input(
+            r"$\textsf{\normalsize Số điện thoại}$",
+            type="default",
+        )
+        gender = st.radio(r"$\textsf{\normalsize Giới tính}$", ("Nam", "Nữ", "Không tiết lộ"))
+
+        password = st.text_input(
+            r"$\textsf{\normalsize Mật khẩu}$:red[$\textsf{\normalsize *}$]",
+            type="password",
+        )
+
+        password_2 = st.text_input(
+            r"$\textsf{\normalsize Nhập lại mật khẩu}$:red[$\textsf{\normalsize *}$]",
+            type="password",
+        )
+
+        flag = True
+        if password != password_2:
+            st.warning("Mật khẩu không khớp.")
+            flag = False
+
+        # button submit
+        submit = st.form_submit_button("Đăng ký")
+        if submit:
+            if not is_existed(email2) and is_valid_email(email2) and flag:
+                hash_pw = hash_pass(password)
+                create_account(id, email2, hash_pw, role= "admin")
+                create_patient_record(id, email2, name, age, phone, gender)
+
+                st.session_state.ID = id
+                st.success("Đăng ký thành công")
+
+                time.sleep(1)
+                st.rerun()
+            else:
+                st.warning("Email/Mật khẩu không hợp lệ")
+
+def add_doctor():
+    # form dang ky
+    placeholder = st.empty()
+    with placeholder.form("Chưa có tài khoản"):
+        st.markdown("### Đăng ký")
+        name = st.text_input(r"$\textsf{\normalsize Tênl}$:red[$\textsf{\normalsize *}$]")
+
+        characters = string.ascii_letters + string.digits
+        id = "".join(random.choice(characters) for i in range(8))
+
+        title = st.text_input(
+            r"$\textsf{\normalsize Chức vụ}$", type="default"
+        )
+        spec = st.text_input(
+            r"$\textsf{\normalsize Chuyên khoa}$", type="default"
+        )
+        image = st.text_input(
+            r"$\textsf{\normalsize Ảnh}$",
+            type="default",
+        )
+
+        avai = st.text_input(
+            r"$\textsf{\normalsize Ngày khám}$:red[$\textsf{\normalsize *}$]",
+            type="password",
+        )
+
+        time = st.text_input(
+            r"$\textsf{\normalsize Thời gian khám}$:red[$\textsf{\normalsize *}$]",
+            type="password",
+        )
+
+        # button submit
+        submit = st.form_submit_button("Đăng ký")
+        if submit:
+            create_doctor(id, name, title, spec, image, avai, time)
+            st.success("Đăng ký thành công")
+            time.sleep(1)
+            st.rerun()

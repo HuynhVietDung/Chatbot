@@ -33,10 +33,13 @@ def update_use(id, use) -> None:
         row_idx = account_sheet.find(id).row
         account_sheet.update_cell(row_idx, 4, use)
 
-def find_accountID(email) -> str:
+def find_accountID(email: str) -> str:
     df = get_data("Account")
     return df[df["Email"] == email].iloc[0]["ID"]
 
+def find_role(id:str) -> str:
+    df = get_data("Account")
+    return df[df["ID"] == id].iloc[0]["Role"]
 
 def is_existed(email, df=pd.DataFrame()):
     df = get_data("Account") if df.empty else df
@@ -131,5 +134,45 @@ def find_doctor_name(ID: str) ->  str:
     df = get_data("Doctor")
     return df[df["ID"] == ID].iloc[0]["Name"]
 
+def create_doctor(id, name, title, spec, img, avai, time) -> None:
+    doc_sheet = get_sheet("Doctor")
+
+    idx = len(doc_sheet.get_all_values()) + 1
+    doc_sheet.insert_row([id, name, title, spec, img, avai, time], idx)
 
 ######################## Drug ########################
+
+
+
+######################## Package ########################
+def create_package(id: str, name:str, price: str, description: str, link: str)-> None:
+    package_sheet = get_sheet("Package")
+
+    idx = len(package_sheet.get_all_values()) + 1
+    package_sheet.insert_row([id, name, price, description, link], idx)
+
+def find_packageID(name: str) ->  str:
+    df = get_data("Package")
+    return df[df["Name"] == name].iloc[0]
+
+def update_package(id: str, name:str, price: str, description: str, link: str)-> None:
+    package_sheet = get_sheet("Package")
+
+    if len(package_sheet.get_all_values()) > 1:
+        row_idx = package_sheet.find(id).row
+
+        if name != "":
+            package_sheet.update_cell(row_idx, 2, name)
+        if price != "":
+            package_sheet.update_cell(row_idx, 3, price)
+        if description != "":
+            package_sheet.update_cell(row_idx, 4, description)
+        if link != "":
+            package_sheet.update_cell(row_idx, 5, link)
+
+def delete_package(ID: str) -> None:
+    package_sheet = get_sheet("Package")
+    if len(package_sheet.get_all_values()) > 1:
+        row_idx = package_sheet.find(ID).row
+        if row_idx != None:
+            package_sheet.delete_rows(row_idx)
