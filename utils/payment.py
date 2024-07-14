@@ -76,7 +76,7 @@ def payment():
 
 
 def get_infor_customer():
-    stripe.api_key = st.secrets["strip_api_key"]
+    stripe.api_key = st.secrets["stripe_api_key"]
 
     customers = stripe.Customer.list()
     

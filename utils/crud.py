@@ -58,6 +58,12 @@ def hash_pass(password: str):
 def check_pass(new_pw: str, old_pw:str):
     return bcrypt.checkpw(new_pw.encode('utf-8'), old_pw.encode('utf-8'))
 
+def delete_account(ID:str) -> None:
+    account_sheet = get_sheet("Account")
+    if len(account_sheet.get_all_values()) > 1:
+        row_idx = account_sheet.find(ID).row
+        if row_idx != None:
+            account_sheet.delete_rows(row_idx)
 
 ######################## Patient ########################
 def create_patient_record(
@@ -140,6 +146,13 @@ def create_doctor(id, name, title, spec, img, avai, time) -> None:
     idx = len(doc_sheet.get_all_values()) + 1
     doc_sheet.insert_row([id, name, title, spec, img, avai, time], idx)
 
+def delete_doctor(ID: str) -> None:
+    doctor_sheet = get_sheet("Doctor")
+    if len(doctor_sheet.get_all_values()) > 1:
+        row_idx = doctor_sheet.find(ID).row
+        if row_idx != None:
+            doctor_sheet.delete_rows(row_idx)
+            
 ######################## Drug ########################
 
 

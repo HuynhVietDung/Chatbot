@@ -4,6 +4,8 @@ import pandas as pd
 import time
 import datetime
 import random
+from PIL import Image
+import os
 import string
 from utils.connect import get_data
 from utils.crud import (
@@ -23,7 +25,9 @@ from utils.crud import (
     find_role,
     create_package,
     delete_package,
-    create_doctor
+    create_doctor,
+    delete_account,
+    delete_doctor
 )
 
 def set_sidebar() -> None:
@@ -299,9 +303,9 @@ def appointment() -> None:
 
         col_1, col_2 = st.columns([1, 1])
         with col_1:
-            if doctor_info["Image"].values[0] != "None":
+            try:
                 st.image(doctor_info["Image"].values[0], width=250)
-            else:
+            except:
                 unknown_doctor = "Image/Unknown_person.jpg"
                 st.image(unknown_doctor, width=250)
         with col_2:
@@ -442,12 +446,16 @@ def profile() -> None:
             if Image == "":
                 st.image("Image/Unknown_person.jpg", width=250)
             else:
-                st.image(Image, width=250)
+                try:
+                    st.image(Image, width=250)
+                except:
+                    st.image("Image/Unknown_person.jpg", width=250)
+
         with col2:
-            st.write(f"📝  Tên: {Name}")
-            st.write(f"📜  Tuổi: {Age}")
-            st.write(f"📧  Email: {Email}")
-            st.write(f"📞  SDT: {Phone}")
+            st.subheader(f"📝  Tên: {Name}")
+            st.subheader(f"📜  Tuổi: {Age}")
+            st.subheader(f"📧  Email: {Email}")
+            st.subheader(f"📞  SDT: {Phone}")
 
             col3, col4, col5 = st.columns(3)
             with col3:
@@ -546,29 +554,34 @@ def add_package_form()-> None:
         )
 
         price = st.text_input(
-            r"$\textsf{\normalsize Giá gói}$:red[$\textsf{\normalsize *}$", type="default"
+            r"$\textsf{\normalsize Giá gói}$:red[$\textsf{\normalsize *}$]", type="default"
         )
 
         description = st.text_area(
-            r"$\textsf{\normalsize Mô tả tính năng}$:red[$\textsf{\normalsize *}$",
+            r"$\textsf{\normalsize Mô tả tính năng}$:red[$\textsf{\normalsize *}$]",
             height=300
         )
 
         link = st.text_input(
-            r"$\textsf{\normalsize Link thanh toán}$:red[$\textsf{\normalsize *}$", type="default"
+            r"$\textsf{\normalsize Link thanh toán}$:red[$\textsf{\normalsize *}$]", type="default"
         )
         
         # button submit
         submit = st.form_submit_button("Thêm")
-        if submit:
+        if submit and st.session_state.form_state:
             try:
                 if name != "" and option != "" and price != "" and description != "" and link != "":
                     create_package(id, name, price, description, link)
 
                     st.success("Thêm gói thành công")
+                    
+                    try:
+                        del st.session_state.form_state
+                    except:
+                        st.error("Có lỗi xảy ra trong quá trình thiết lập")
 
                     time.sleep(1)
-                    st.rerun()
+                    # st.rerun()
                 else:
                     st.error("Điền thiếu thông tin")
             except:
@@ -608,35 +621,27 @@ def delete_package_form()-> None:
             with st.container():
             # write contents
                 col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 2, 3, 1, 1])
-                col1.markdown(
-                    f'<div class="custom-row-space">{row["ID"]}</div>',
-                    unsafe_allow_html=True,
-                )
-                col2.markdown(
-                    f'<div class="custom-row-space">{row["Name"]}</div>',
-                    unsafe_allow_html=True,
-                )
-                col3.markdown(
-                    f'<div class="custom-row-space">{row["Price"]}</div>',
-                    unsafe_allow_html=True,
-                )
-                col4.markdown(
-                    f'<div class="custom-row-space">{row["Description"]}</div>',
-                    unsafe_allow_html=True,
-                )
-
-                col5.markdown(
-                    f'<div class="custom-row-space">{row["Link"]}</div>',
-                    unsafe_allow_html=True,
-                )
-
+                with col1:
+                    st.write(f'{row["ID"]}')
+                with col2:    
+                    st.write(f'{row["Name"]}')
+                with col3:
+                    st.write(f'{row["Price"]}')
+                with col4:
+                    st.write(f'{row["Description"]}')
+                with col5:
+                    st.write(f'{row["Link"]}')
                 with col6:
                     del_but = st.button("Hủy", key=row["ID"])
-                    if del_but:
-                        delete_package(row["ID"])
-                        st.success("Hủy gói thành công")
-                        time.sleep(1)
-                        st.rerun()
+                if del_but:
+                    delete_package(row["ID"])
+                    st.success("Hủy gói thành công")
+                    try:
+                        del st.session_state.form2_state
+                    except:
+                        pass
+                    time.sleep(1)
+                    st.rerun()
 
     else:
         st.write("Hiện không có gói nào")
@@ -644,16 +649,13 @@ def delete_package_form()-> None:
 def add_admin() -> None:
     # form dang ky
     placeholder = st.empty()
-    with placeholder.form("Chưa có tài khoản"):
-        st.markdown("### Đăng ký")
+    with placeholder.form("Đăng ký tài khoản quản trị viên mới"):
+        st.markdown("### Đăng ký tài khoản quản trị viên mới")
         email2 = st.text_input(r"$\textsf{\normalsize Email}$:red[$\textsf{\normalsize *}$]")
 
         characters = string.ascii_letters + string.digits
         id = "".join(random.choice(characters) for i in range(8))
-        name = st.text_input(
-            r"$\textsf{\normalsize Tên}$", type="default"
-        )
-        
+
         password = st.text_input(
             r"$\textsf{\normalsize Mật khẩu}$:red[$\textsf{\normalsize *}$]",
             type="password",
@@ -678,17 +680,21 @@ def add_admin() -> None:
 
                 st.session_state.ID = id
                 st.success("Đăng ký thành công")
+                try:
+                    del st.session_state.form3_state
+                except:
+                    pass
 
                 time.sleep(1)
-                st.rerun()
+                # st.rerun()
             else:
                 st.warning("Email/Mật khẩu không hợp lệ")
 
 def add_doctor()-> None:
     # form dang ky
     placeholder = st.empty()
-    with placeholder.form("Chưa có tài khoản"):
-        st.markdown("### Đăng ký")
+    with placeholder.form("Đăng ký thông tin bác sĩ"):
+        st.markdown("### Đăng ký thông tin bác sĩ")
         name = st.text_input(r"$\textsf{\normalsize Tên}$:red[$\textsf{\normalsize *}$]")
 
         characters = string.ascii_letters + string.digits
@@ -700,25 +706,137 @@ def add_doctor()-> None:
         spec = st.text_input(
             r"$\textsf{\normalsize Chuyên khoa}$", type="default"
         )
-        image = st.text_input(
-            r"$\textsf{\normalsize Ảnh}$",
-            type="default",
-        )
 
+        uploaded_file = st.file_uploader(r"$\textsf{\normalsize Ảnh}$", type=["jpg", "jpeg", "png"])
+        
+        if uploaded_file == None:
+            image = ""
+        else:
+            saved_image = Image.open(uploaded_file)
+            # Save the image using PIL
+            image_path = f"{st.session_state.ID}.png"
+            if os.path.exists(image_path):
+                os.remove(image_path)
+
+            saved_image.save(image_path)
+            image = image_path
+        
         avai = st.text_input(
             r"$\textsf{\normalsize Ngày khám}$:red[$\textsf{\normalsize *}$]",
-            type="password",
         )
 
-        time = st.text_input(
+        time_slot = st.text_input(
             r"$\textsf{\normalsize Thời gian khám}$:red[$\textsf{\normalsize *}$]",
-            type="password",
         )
 
         # button submit
         submit = st.form_submit_button("Đăng ký")
         if submit:
-            create_doctor(id, name, title, spec, image, avai, time)
+            create_doctor(id, name, title, spec, image, avai, time_slot)
             st.success("Đăng ký thành công")
+            try:
+                del st.session_state.form4_state
+            except:
+                pass
             time.sleep(1)
-            st.rerun()
+            # st.rerun()
+
+
+def delete_admin_form()-> None:
+    admin = get_data("Account") 
+    admin = admin[admin["Role"] == "admin"]
+    admin = admin[admin["ID"] != st.session_state.ID]
+
+    if not admin.empty:
+        with st.container():
+            col1, col2, col3 = st.columns(3)
+
+            # write Header
+            col1.write("ID")
+            col2.write("Email")
+        
+                        
+
+        # write contents
+        # Custom CSS to adjust spacing between elements
+        st.markdown(
+            """
+            <style>
+            .custom-row-space {
+                margin-bottom: 30px; /* Adjust this value to increase/decrease space */
+            }
+            </style>
+        """,
+            unsafe_allow_html=True,
+        )
+
+        for i, row in admin.iterrows():
+            with st.container():
+            # write contents
+                col1, col2, col3 = st.columns(3)
+
+                with col1:
+                    st.write(f'{row["ID"]}')
+                with col2:    
+                    st.write(f'{row["Email"]}')
+                with col3:
+                    del_but = st.button("Xóa", key=row["ID"]) 
+
+                if del_but:
+                    if row["Email"] != "admin1@gmail.com":
+                        delete_account(row["ID"])
+                        st.success("Xóa thành công")
+                        try:
+                            del st.session_state.form5_state
+                        except:
+                            pass
+                        time.sleep(1)
+                        st.rerun()
+
+                    else:
+                        st.success("Không thể xóa quản trị viên gốc.")
+
+    else:
+        st.write("Hiện không có quản trị viên nào khác.")
+
+
+def delete_doctor_form()-> None:
+    doctor = get_data("Doctor") 
+
+
+    if not doctor.empty:
+        with st.container():
+            col1, col2, col3, col4 = st.columns(4)
+            # write Header
+            col1.write("ID")
+            col2.write("Name")
+            col3.write("Title")
+
+        # write contents
+        for i, row in doctor.iterrows():
+            with st.container():
+            # write contents
+                col1, col2, col3, col4 = st.columns(4)
+
+                with col1:
+                    st.write(f'{row["ID"]}')
+                with col2:    
+                    st.write(f'{row["Name"]}')
+                with col3:    
+                    st.write(f'{row["Title"]}')
+
+                with col4:
+                    del_but = st.button("Xóa", key=row["Name"]) 
+
+                if del_but:
+                    delete_doctor(row["ID"])
+                    st.success("Xóa thành công")
+                    try:
+                        del st.session_state.form6_state
+                    except:
+                        pass
+                    time.sleep(1)
+                    st.rerun()
+
+    else:
+        st.write("Hiện không có bác sĩ nào")
