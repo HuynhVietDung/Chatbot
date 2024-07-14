@@ -11,4 +11,3 @@ gspread
 oauth2client
 bcrypt
 stripe
-webbrowser
