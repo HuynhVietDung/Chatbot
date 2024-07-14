@@ -13,9 +13,8 @@ from utils.page_functions import (
     set_sidebar
 )
 
-set_default_page()
-
 st.set_page_config(page_title="Doctor AI", page_icon="👨‍🔬", layout="wide")
+set_default_page()
 
 navbar = st_navbar(["Home", "Chat", "Search", "Appointment", "Login"])
 set_sessionID()
