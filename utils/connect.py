@@ -5,7 +5,6 @@ import pandas as pd
 import json
 import os
 
-@st.cache_data
 def get_sheet(sheetname: str):
     # Define the scope
     scope = [
@@ -26,7 +25,6 @@ def get_sheet(sheetname: str):
 
     return sheet
 
-@st.cache_data
 def get_data(sheetname: str) -> pd.DataFrame:
     # Define the scope
     scope = [
