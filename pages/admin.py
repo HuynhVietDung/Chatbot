@@ -51,8 +51,12 @@ if navbar == "Home":
 
 
 elif  navbar == "Update":
+    if "form1_state" not in st.session_state:
+        st.session_state.form1_state = False
     st.title("Gói sản phẩm")
-    if st.button("Thêm gói mới"):
+
+    if st.button("Thêm gói mới") or st.session_state.form1_state:
+        st.session_state.form1_state = True
         add_package_form()
         
 
