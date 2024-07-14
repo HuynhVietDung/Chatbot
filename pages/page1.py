@@ -1,10 +1,8 @@
 import streamlit as st
 from streamlit_navigation_bar import st_navbar
 import pandas as pd
-from utils.connect import get_data, create_credentials
+from utils.connect import  create_credentials
 from utils.page_functions import home, search_drugs, appointment, profile, set_sidebar
-from utils.crud import filter_appointment, cancel_appointment
-import google.generativeai as genai
 from utils.chat import chatbot
 
 
@@ -15,6 +13,7 @@ if "ID" not in st.session_state:
     st.switch_page("main.py")
 
 st.set_page_config(page_title="Doctor AI", page_icon="👨‍🔬", layout="wide")
+
 navbar = st_navbar(
     ["Home", "Chat", "Search", "Appointment", "Profile", "Logout"],
     selected=st.session_state.default_page,

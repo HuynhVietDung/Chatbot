@@ -13,15 +13,14 @@ from utils.page_functions import (
     set_sidebar
 )
 
-create_credentials()
-
 set_default_page()
 
 st.set_page_config(page_title="Doctor AI", page_icon="👨‍🔬", layout="wide")
+
 navbar = st_navbar(["Home", "Chat", "Search", "Appointment", "Login"])
 set_sessionID()
 
-set_sidebar()
+create_credentials()
 
 if navbar == "Home":
     home()
@@ -66,4 +65,4 @@ elif navbar == "Login":
             st.session_state.is_forgotten = False
             st.rerun()
 
-
+set_sidebar()
