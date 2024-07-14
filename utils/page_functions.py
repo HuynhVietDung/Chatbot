@@ -546,28 +546,30 @@ def add_package_form():
         )
 
         price = st.text_input(
-            r"$\textsf{\normalsize Giá gói}$", type="default"
+            r"$\textsf{\normalsize Giá gói}$:red[$\textsf{\normalsize *}$", type="default"
         )
-        description = st.text_input(
-            r"$\textsf{\normalsize Mô tả tính năng}$", type="default"
+
+        description = st.text_area(
+            r"$\textsf{\normalsize Mô tả tính năng}$:red[$\textsf{\normalsize *}$",
+            height=300
+        )
+
+        link = st.text_input(
+            r"$\textsf{\normalsize Link thanh toán}$:red[$\textsf{\normalsize *}$", type="default"
         )
         
         # button submit
         submit = st.form_submit_button("Thêm")
         if submit:
             try:
-                if option == "Tuần":
-                    link = ""
-                elif option == "Tháng":
-                    link = ""
+                if name != "" and option != "" and price != "" and description != "" and link != "":
+                    create_package(id, name, price, description, link)
+
+                    st.success("Thêm gói thành công")
+                    time.sleep(1)
+                    st.rerun()
                 else:
-                    link = ""
-                create_package(id, name, price, description, link)
-
-                st.success("Thêm gói thành công")
-                time.sleep(1)
-                st.rerun()
-
+                    st.error("Điền thiếu thông tin")
             except:
                 st.error("Có lỗi xảy ra trong quá trình xử lý")
             
@@ -650,15 +652,7 @@ def add_admin():
         name = st.text_input(
             r"$\textsf{\normalsize Tên}$", type="default"
         )
-        age = st.text_input(
-            r"$\textsf{\normalsize Tuổi}$", type="default"
-        )
-        phone = st.text_input(
-            r"$\textsf{\normalsize Số điện thoại}$",
-            type="default",
-        )
-        gender = st.radio(r"$\textsf{\normalsize Giới tính}$", ("Nam", "Nữ", "Không tiết lộ"))
-
+        
         password = st.text_input(
             r"$\textsf{\normalsize Mật khẩu}$:red[$\textsf{\normalsize *}$]",
             type="password",
@@ -680,7 +674,6 @@ def add_admin():
             if not is_existed(email2) and is_valid_email(email2) and flag:
                 hash_pw = hash_pass(password)
                 create_account(id, email2, hash_pw, role= "admin")
-                create_patient_record(id, email2, name, age, phone, gender)
 
                 st.session_state.ID = id
                 st.success("Đăng ký thành công")
@@ -695,7 +688,7 @@ def add_doctor():
     placeholder = st.empty()
     with placeholder.form("Chưa có tài khoản"):
         st.markdown("### Đăng ký")
-        name = st.text_input(r"$\textsf{\normalsize Tênl}$:red[$\textsf{\normalsize *}$]")
+        name = st.text_input(r"$\textsf{\normalsize Tên}$:red[$\textsf{\normalsize *}$]")
 
         characters = string.ascii_letters + string.digits
         id = "".join(random.choice(characters) for i in range(8))

@@ -4,7 +4,7 @@ import pandas as pd
 import bcrypt
 
 
-## Available Sheets name are "Account", "Appointerment", "Drug", "Doctor", "Patient"
+## Available Sheets name are "Account", "Appointerment", "Drug", "Doctor", "Patient", "Package"
 
 ######################## Account ########################
 def create_account(id, email, password, role= "user") -> None:
