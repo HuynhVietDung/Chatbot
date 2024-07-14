@@ -169,9 +169,8 @@ def search_drugs() -> None:
             return df_search
         return pd.DataFrame()
     
-    col1, col2, col3 = st.columns([3,3,2])
-    with col2:
-        st.header("Công Cụ Tìm Kiếm Thuốc")
+
+    st.header("Công Cụ Tìm Kiếm Thuốc")
 
     # Connect to the drug dataset
     df = get_data("Drug")
