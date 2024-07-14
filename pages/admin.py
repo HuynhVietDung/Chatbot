@@ -29,7 +29,7 @@ if navbar == "Home":
     appointment = get_data("Appointment")
     account = get_data("Account")
 
-    new_appointment = appointment.join(doctor, how= "inner").join(patient, how= "inner")
+    new_appointment = appointment.join(doctor, how= "inner", lsuffix='_appoinment', rsuffix='_doctor').join(patient, how= "inner", lsuffix='_doctor', rsuffix='_patient')
 
     col1, col2 = st.columns(2)
 
