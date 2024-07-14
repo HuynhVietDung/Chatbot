@@ -17,7 +17,8 @@ from utils.crud import (
     find_accountID,
     get_password,
     hash_pass,
-    check_pass
+    check_pass, 
+    find_doctor_name
 )
 
 def set_sidebar() -> None:
@@ -375,6 +376,17 @@ def profile() -> None:
         Phone = user_df["Phone"]
         Image = user_df["Image"]
 
+        st.markdown(
+            """
+            <style>
+            div.stButton > button {
+                width: 100%;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True,
+        )
+
         ################ Profile ################
         st.title("Thông tin cá nhân")
         col1, col2 = st.columns(2)
@@ -410,9 +422,9 @@ def profile() -> None:
 
             # write Header
             col1.write("ID")
-            col2.write("DoctorID")
-            col3.write("Time")
-            col4.write("Description")
+            col2.write("Bác sĩ")
+            col3.write("Thời gian")
+            col4.write("Mô tả")
             st.write("___" * 20)
 
             # write contents
@@ -435,7 +447,7 @@ def profile() -> None:
                     unsafe_allow_html=True,
                 )
                 col2.markdown(
-                    f'<div class="custom-row-space">{row["DoctorID"]}</div>',
+                    f'<div class="custom-row-space">{find_doctor_name(row["DoctorID"])}</div>',
                     unsafe_allow_html=True,
                 )
                 col3.markdown(

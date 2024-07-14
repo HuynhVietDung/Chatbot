@@ -4,6 +4,8 @@ import pandas as pd
 import bcrypt
 
 
+## Available Sheets name are "Account", "Appointerment", "Drug", "Doctor", "Patient"
+
 ######################## Account ########################
 def create_account(id, email, password, role= "user") -> None:
     account_sheet = get_sheet("Account")
@@ -125,6 +127,9 @@ def cancel_appointment(ID: str) -> None:
 
 
 ######################## Doctor ########################
+def find_doctor_name(ID: str) ->  str:
+    df = get_data("Doctor")
+    return df[df["ID"] == ID].iloc[0]["Name"]
 
 
 ######################## Drug ########################
