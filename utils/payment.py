@@ -13,15 +13,20 @@ def payment():
     for i in range(n_col):
         with col[i]:
             placeholder = st.empty()
-            with placeholder.form("Gói đăng ký tuần"):
-                st.header("**Gói đăng ký tuần**")
+            with placeholder.form(df.iloc[i]['Name']):
+
+                st.header(f"**{df.iloc[i]['Name']}**")
+                
+                features = df.iloc[i]['Description'].split("✔️ ")
                 # st.write("✔️ Tư vấn y tế cơ bản")
                 # st.write("✔️ Theo dõi triệu chứng")
                 # st.write("✔️ Lập kế hoạch sức khỏe cá nhân")
                 # st.write("✔️ Cảnh báo sức khỏe")
                 # st.write("✔️ Trả lời câu hỏi không giới hạn trong 1 tuần")
                 # st.write(f"✔️ Khuyến mãi 10% cho những lần đăng ký sau")
-                st.write(df.iloc[i]["Description"])
+                for feature in feature:
+                    st.write(feature)
+                    
                 st.write(f"Giá: {df.iloc[i]['Price']}")
                 submit = st.form_submit_button("Mua")
                 if submit:
