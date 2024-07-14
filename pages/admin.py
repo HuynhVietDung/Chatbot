@@ -24,10 +24,10 @@ if navbar == "Home":
 
     st.title("Dashboard")
 
-    doctor = get_data("Danh sách bác sĩ")
-    patient = get_data("Danh sách bệnh nhân")
-    appointment = get_data("Danh sách lịch hẹn")
-    account = get_data("Danh sách tài khoản")
+    doctor = get_data("Doctor")
+    patient = get_data("Patient")
+    appointment = get_data("Appointment")
+    account = get_data("Account")
 
     new_appointment = appointment.join(doctor, how= "inner").join(patient, how= "inner")
 
@@ -35,18 +35,18 @@ if navbar == "Home":
 
     with col1:
         with st.container():
-            st.header("Patient")
+            st.header("Danh sách bệnh nhân")
             st.dataframe(patient)
         with st.container():
-            st.header("Doctor")
+            st.header("Danh sách bác sĩ")
             st.dataframe(doctor)
 
     with col2:
         with st.container():
-            st.header("Appointment")
+            st.header("Danh sách lịch hẹn")
             st.dataframe(new_appointment)
         with st.container():
-            st.header("Account")
+            st.header("Danh sách tài khoản")
             st.dataframe(account)
 
 
