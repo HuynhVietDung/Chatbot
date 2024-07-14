@@ -540,6 +540,11 @@ def add_package_form():
         characters = string.ascii_letters + string.digits
         id = "".join(random.choice(characters) for i in range(8))
 
+        option = st.selectbox(
+            r"$\textsf{\normalsize Thời hạn}$:red[$\textsf{\normalsize *}$]",
+            ("Tuần", "Tháng", "Năm")
+        )
+
         price = st.text_input(
             r"$\textsf{\normalsize Giá gói}$", type="default"
         )
@@ -547,13 +552,25 @@ def add_package_form():
             r"$\textsf{\normalsize Mô tả tính năng}$", type="default"
         )
         
-        link = ""
-
         # button submit
         submit = st.form_submit_button("Thêm")
         if submit:
-            create_package(id, name, price, description, link)
-            st.rerun()
+            try:
+                if option == "Tuần":
+                    link = ""
+                elif option == "Tháng":
+                    link = ""
+                else:
+                    link = ""
+                create_package(id, name, price, description, link)
+
+                st.success("Thêm gói thành công")
+                time.sleep(1)
+                st.rerun()
+
+            except:
+                st.error("Có lỗi xảy ra trong quá trình xử lý")
+            
 
 
 def delete_package_form():
@@ -614,6 +631,8 @@ def delete_package_form():
                     del_but = st.button("Hủy", key=row["ID"])
                     if del_but:
                         delete_package(row["ID"])
+                        st.success("Hủy gói thành công")
+                        time.sleep(1)
                         st.rerun()
 
     else:

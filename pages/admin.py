@@ -17,17 +17,19 @@ if navbar == "Home":
     package = get_data("Package")
 
     col = st.columns(2)
-    with col[1]:
+    with col[0]:
         st.title("Gói sản phẩm.")
         st.dataframe(package)
 
 
     st.title("Dashboard")
 
-    doctor = get_data("Doctor")
-    patient = get_data("Patient")
-    appointment = get_data("Appointment")
-    account = get_data("Account")
+    doctor = get_data("Danh sách bác sĩ")
+    patient = get_data("Danh sách bệnh nhân")
+    appointment = get_data("Danh sách lịch hẹn")
+    account = get_data("Danh sách tài khoản")
+
+    new_appointment = appointment.join(doctor, how= "inner").join(patient, how= "inner")
 
     col1, col2 = st.columns(2)
 
@@ -42,7 +44,7 @@ if navbar == "Home":
     with col2:
         with st.container():
             st.header("Appointment")
-            st.dataframe(appointment)
+            st.dataframe(new_appointment)
         with st.container():
             st.header("Account")
             st.dataframe(account)
