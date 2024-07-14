@@ -162,8 +162,8 @@ def reset_password() -> None:
         if submit:
             if is_existed(email) and password == new_pass:
                 id = find_accountID(email)
-                update_account(id, password=new_pass)
-                st.session_state.ID = id
+                update_account(id, password=hash_pass(new_pass))
+                st.session_state.ID = id 
 
                 time.sleep(1)
                 st.success("Đổi mật khẩu thành công")
@@ -531,7 +531,7 @@ def profile() -> None:
         st.switch_page("main.py")
 
 
-def add_package_form():
+def add_package_form()-> None:
     placeholder = st.empty()
     with placeholder.form("Thêm gói"):
         st.markdown("### Thêm gói")
@@ -566,6 +566,7 @@ def add_package_form():
                     create_package(id, name, price, description, link)
 
                     st.success("Thêm gói thành công")
+
                     time.sleep(1)
                     st.rerun()
                 else:
@@ -575,7 +576,7 @@ def add_package_form():
             
 
 
-def delete_package_form():
+def delete_package_form()-> None:
     package = get_data("Package")
 
     if not package.empty:
@@ -640,7 +641,7 @@ def delete_package_form():
     else:
         st.write("Hiện không có gói nào")
 
-def add_admin():
+def add_admin() -> None:
     # form dang ky
     placeholder = st.empty()
     with placeholder.form("Chưa có tài khoản"):
@@ -683,7 +684,7 @@ def add_admin():
             else:
                 st.warning("Email/Mật khẩu không hợp lệ")
 
-def add_doctor():
+def add_doctor()-> None:
     # form dang ky
     placeholder = st.empty()
     with placeholder.form("Chưa có tài khoản"):
