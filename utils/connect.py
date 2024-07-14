@@ -5,7 +5,7 @@ import pandas as pd
 import json
 import os
 
-
+@st.cache_data
 def get_sheet(sheetname: str):
     # Define the scope
     scope = [
@@ -26,7 +26,7 @@ def get_sheet(sheetname: str):
 
     return sheet
 
-
+@st.cache_data
 def get_data(sheetname: str) -> pd.DataFrame:
     # Define the scope
     scope = [
@@ -51,7 +51,7 @@ def get_data(sheetname: str) -> pd.DataFrame:
     # Convert to DataFrame
     return pd.DataFrame(data[1:], columns=data[0])
 
-
+@st.cache_data
 def create_credentials():
     if not os.path.isfile("credentials.json"):
         data = {

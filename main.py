@@ -6,6 +6,7 @@ from utils.page_functions import (
     search_drugs,
     login,
     register,
+    reset_password,
     set_sessionID,
     set_flag,
     set_default_page,
@@ -13,11 +14,14 @@ from utils.page_functions import (
 )
 
 create_credentials()
+
 set_default_page()
+
 st.set_page_config(page_title="Doctor AI", page_icon="👨‍🔬", layout="wide")
 navbar = st_navbar(["Home", "Chat", "Search", "Appointment", "Login"])
 set_sessionID()
 
+set_sidebar()
 
 if navbar == "Home":
     home()
@@ -33,17 +37,33 @@ elif navbar == "Appointment":
 
 elif navbar == "Login":
     set_flag()
+
     if st.session_state.is_login:
         login()
-        if st.button("Chưa có tài khoản. Đăng ký ngay"):
+        
+        if st.button("Quên mật khẩu"):
             st.session_state.is_login = False
-            st.rerun()
-    
-    else:
-        register()
-        if st.button("Đã có tài khoản. Đăng nhập ngay"):
-            st.session_state.is_login = True
+            st.session_state.is_forgotten = True
             st.rerun()
 
-set_sidebar()
+        st.write("Chưa có tài khoản.")
+        if st.button("Đăng ký ngay"):
+            st.session_state.is_login = False
+            st.rerun()
+        
+    elif st.session_state.is_forgotten:
+        reset_password()
+        if st.button("Quay lại"):
+            st.session_state.is_login = True
+            st.session_state.is_forgotten = False
+            st.rerun()
+
+    else:
+        register()
+        st.write("Đã có tài khoản.")
+        if st.button("Đăng nhập ngay"):
+            st.session_state.is_login = True
+            st.session_state.is_forgotten = False
+            st.rerun()
+
 

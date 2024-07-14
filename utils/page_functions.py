@@ -15,6 +15,7 @@ from utils.crud import (
     is_existed,
     is_valid_email,
     find_accountID,
+    update_account,
     get_password,
     hash_pass,
     check_pass, 
@@ -37,6 +38,9 @@ def set_sessionID() -> None:
 def set_flag():
     if "is_login" not in st.session_state:
         st.session_state.is_login = True
+    if "is_forgotten" not in st.session_state:
+        st.session_state.is_forgotten = False
+    
 
 def set_default_page(page="Home") -> None:
     if "default_page" not in st.session_state:
@@ -81,20 +85,21 @@ def register() -> None:
     placeholder = st.empty()
     with placeholder.form("Chưa có tài khoản"):
         st.markdown("### Đăng ký")
-        email2 = st.text_input("Email")
+        email2 = st.text_input(r"$\textsf{\normalsize Email}$:red[$\textsf{\normalsize *}$]")
+
         characters = string.ascii_letters + string.digits
         id = "".join(random.choice(characters) for i in range(8))
         name = st.text_input(
-            r"$\textsf{\normalsize Tên}$:red[$\textsf{\normalsize *}$]", type="default"
+            r"$\textsf{\normalsize Tên}]", type="default"
         )
         age = st.text_input(
-            r"$\textsf{\normalsize Tuổi}$:red[$\textsf{\normalsize *}$]", type="default"
+            r"$\textsf{\normalsize Tuổi}]", type="default"
         )
         phone = st.text_input(
-            r"$\textsf{\normalsize Số điện thoại}$:red[$\textsf{\normalsize *}$]",
+            r"$\textsf{\normalsize Số điện thoại}]",
             type="default",
         )
-        gender = st.radio(r"$\textsf{\normalsize Giới tính}$:red[$\textsf{\normalsize *}$]", ("Nam", "Nữ", "Không tiết lộ"))
+        gender = st.radio(r"$\textsf{\normalsize Giới tính}]", ("Nam", "Nữ", "Không tiết lộ"))
 
         password = st.text_input(
             r"$\textsf{\normalsize Mật khẩu}$:red[$\textsf{\normalsize *}$]",
@@ -127,6 +132,41 @@ def register() -> None:
             else:
                 st.warning("Email/Mật khẩu không hợp lệ")
 
+def reset_password() -> None:
+    placeholder = st.empty()
+
+    with placeholder.form("Quên mật khẩu"):
+        st.markdown("### Quên mật khẩu")
+        email = st.text_input(r"$\textsf{\normalsize Email}$:red[$\textsf{\normalsize *}$]")
+
+        new_pass = st.text_input(
+            r"$\textsf{\normalsize Mật khẩu}$:red[$\textsf{\normalsize *}$]",
+            type="password",
+        )
+
+        password = st.text_input(
+            r"$\textsf{\normalsize Nhập lại mật khẩu}$:red[$\textsf{\normalsize *}$]",
+            type="password",
+        )
+
+        if password != new_pass:
+            st.warning("Mật khẩu không khớp.")
+
+        # button submit
+        submit = st.form_submit_button("Hoàn tất")
+
+        if submit:
+            if is_existed(email) and password == new_pass:
+                id = find_accountID(email)
+                update_account(id, password=new_pass)
+                st.session_state.ID = id
+
+                time.sleep(1)
+                st.success("Đổi mật khẩu thành công")
+                st.switch_page("./pages/page1.py")
+
+            else:
+                st.warning("Email chưa đăng ký tài khoản")
 
 def login() -> None:    
     # form login

@@ -14,7 +14,7 @@ if "default_page" not in st.session_state:
 if "ID" not in st.session_state:
     st.switch_page("main.py")
 
-st.set_page_config(page_title="Use", page_icon="👨‍🔬", layout="wide")
+st.set_page_config(page_title="Doctor AI", page_icon="👨‍🔬", layout="wide")
 navbar = st_navbar(
     ["Home", "Chat", "Search", "Appointment", "Profile", "Logout"],
     selected=st.session_state.default_page,
