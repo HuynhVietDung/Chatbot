@@ -5,7 +5,7 @@ from utils.connect import get_data
 import js2py
 
 def open_url(url):
-    code_2 = "function f(x) {window.open(" + url + ", '_blank');}"
+    code_2 = "function f(x) {window.open('" + url + "', '_blank');}"
     js2py.eval_js(code_2) 
 
 def payment():
