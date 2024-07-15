@@ -2,7 +2,7 @@ import streamlit as st
 import stripe
 import pandas as pd
 from utils.connect import get_data 
- 
+from utils.crud import find_accountEmail, update_use
 
 def payment():
     df = get_data("Package")
@@ -37,8 +37,17 @@ def get_infor_customer():
     name_customers = [c.name for c in customers]
     id_customers = [c.id for c in customers]
     gmail_customers = [c.email for c in customers]
-    df = pd.DataFrame({'ID':id_customers,'Name':name_customers,'Gmail':gmail_customers,'Amount':amount})
+    df = pd.DataFrame({'ID':id_customers,'Name':name_customers,'Email':gmail_customers,'Amount':amount})
     
     return df
+
+def upgrade_account(ID: str):
+    email = find_accountEmail(ID)
+    customer = stripe.Customer.list()
+    email_customer = [c.email for c in customer]
+
+    if email == email_customer[0]:  
+        update_use(ID, 2)  #update use = 2
+        st.rerun()
 
 

@@ -8,6 +8,7 @@ from PIL import Image
 import os
 import string
 from utils.connect import get_data
+from utils.payment import get_infor_customer
 from utils.crud import (
     create_patient_record,
     create_account,
@@ -471,7 +472,10 @@ def profile() -> None:
         ################# Appointment #################
         st.header("Lịch hẹn sắp tới 📥")
         appointment = filter_appointment(st.session_state.ID)
-
+        
+        convert_time = appointment["Time"].apply(lambda x: datetime.datetime.strptime(x, "%Y-%m-%d %I:%M %p")) 
+        appointment = appointment[convert_time > datetime.datetime.now()]
+        
         if not appointment.empty:
             with st.container():
                 col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 2, 3, 1, 1])
@@ -484,39 +488,18 @@ def profile() -> None:
                 
 
             # write contents
-            # Custom CSS to adjust spacing between elements
-            st.markdown(
-                """
-                <style>
-                .custom-row-space {
-                    margin-bottom: 30px; /* Adjust this value to increase/decrease space */
-                }
-                </style>
-            """,
-                unsafe_allow_html=True,
-            )
-
             for i, row in appointment.iterrows():
                 with st.container():
                 # write contents
                     col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 2, 3, 1, 1])
-                    col1.markdown(
-                        f'<div class="custom-row-space">{row["ID"]}</div>',
-                        unsafe_allow_html=True,
-                    )
-                    col2.markdown(
-                        f'<div class="custom-row-space">{find_doctor_name(row["DoctorID"])}</div>',
-                        unsafe_allow_html=True,
-                    )
-                    col3.markdown(
-                        f'<div class="custom-row-space">{row["Time"]}</div>',
-                        unsafe_allow_html=True,
-                    )
-                    col4.markdown(
-                        f'<div class="custom-row-space">{row["Description"]}</div>',
-                        unsafe_allow_html=True,
-                    )
-
+                    
+                    col1.write(row["ID"])
+                    
+                    col2.write(find_doctor_name(row["DoctorID"]))
+                    
+                    col3.write(row["Time"])
+                    
+                    col4.write(row["Description"])
                     with col5:
                         change_but = st.button("Thay đổi", key=i)
                         if change_but:
@@ -534,6 +517,69 @@ def profile() -> None:
 
         else:
             st.write("Hiện không có lịch hẹn nào")
+        
+        ################ Appointment History ################
+        st.header("Lịch sử đặt hẹn")
+        appointment = filter_appointment(st.session_state.ID)        
+        if not appointment.empty:
+            with st.container():
+                col1, col2, col3, col4 = st.columns(4)
+
+                # write Header
+                col1.write("ID")
+                col2.write("Bác sĩ")
+                col3.write("Thời gian")
+                col4.write("Mô tả")
+                
+            # write contents
+            for i, row in appointment.iterrows():
+                with st.container():
+                # write contents
+                    col1, col2, col3, col4= st.columns(4)
+                    
+                    col1.write(row["ID"])
+                    
+                    col2.write(find_doctor_name(row["DoctorID"]))
+                    
+                    col3.write(row["Time"])
+                    
+                    col4.write(row["Description"])
+
+        else:
+            st.write("Lịch sử trống")
+
+        ################ Payment History ################
+        st.header("Lịch sử giao dịch")
+        payment = get_infor_customer()
+        payment = payment[payment["ID"] == st.session_state.ID]
+
+        if not payment.empty:
+            with st.container():
+                col1, col2, col3, col4 = st.columns(4)
+
+                # write Header
+                col1.write("ID")
+                col2.write("Tên")
+                col3.write("Email")
+                col4.write("Giá")
+                
+
+            # write contents
+            for i, row in payment.iterrows():
+                with st.container():
+                # write contents
+                    col1, col2, col3, col4= st.columns(4)
+                    
+                    col1.write(row["ID"])
+                    
+                    col2.write(row["Name"])
+                    
+                    col3.write(row["Email"])
+                    
+                    col4.write(row["Amount"])
+        else:
+            st.write("Chưa có giao dịch nào")
+
     else:
         st.session_state.clear()
         st.switch_page("main.py")

@@ -9,7 +9,7 @@ from langchain_community.document_loaders.csv_loader import CSVLoader
 from langchain.chains.question_answering import load_qa_chain
 from utils.connect import get_data
 from utils.crud import update_use
-from utils.payment import payment, get_infor_customer
+from utils.payment import payment, get_infor_customer, upgrade_account
 
 def chatbot():
     @st.cache_resource
@@ -41,9 +41,10 @@ def chatbot():
         if use == 0:
             st.write("Bạn vui lòng thanh toán để được tư vấn tiếp.")
             payment()
-            df = get_infor_customer()
-            if st.session_state.ID == df.iloc[0]["ID"]:
-                update_use(st.session_state.ID, use=2)
+            # df = get_infor_customer()
+            # if st.session_state.ID == df.iloc[0]["ID"]:
+            #     update_use(st.session_state.ID, use=2)
+            upgrade_account(st.session_state.ID)
 
         if use == 1:
             if (
@@ -116,9 +117,11 @@ def chatbot():
                             st.write("Bạn vui lòng thanh toán để được tư vấn tiếp.")
                             payment()
 
-                            df = get_infor_customer()
-                            if st.session_state.ID == df.iloc[0]["ID"]:
-                                update_use(st.session_state.ID, use=2)
+                            # df = get_infor_customer()
+                            # if st.session_state.ID == df.iloc[0]["ID"]:
+                            #     update_use(st.session_state.ID, use=2)
+                            upgrade_account(st.session_state.ID)
+
 
         if use == 2:
             if (

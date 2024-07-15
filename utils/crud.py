@@ -37,6 +37,10 @@ def find_accountID(email: str) -> str:
     df = get_data("Account")
     return df[df["Email"] == email].iloc[0]["ID"]
 
+def find_accountEmail(ID: str) -> str:
+    df = get_data("Account")
+    return df[df["ID"] == ID].iloc[0]["Email"]
+
 def find_role(id:str) -> str:
     df = get_data("Account")
     return df[df["ID"] == id].iloc[0]["Role"]

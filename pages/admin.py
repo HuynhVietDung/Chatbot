@@ -4,6 +4,8 @@ from utils.connect import  create_credentials
 from utils.page_functions import set_sidebar, add_package_form, delete_package_form, add_admin, add_doctor,\
 delete_doctor_form, delete_admin_form
 from utils.connect import get_data
+from utils.payment import get_infor_customer
+from utils.crud import find_accountEmail
 
 st.set_page_config(page_title="Doctor AI", page_icon="👨‍🔬", layout="wide")
 
@@ -13,16 +15,18 @@ navbar = st_navbar(
 )
 
 if navbar == "Home":
-    st.title("Welcome back.")
+    try:
+        st.title(f"Welcome back {find_accountEmail(st.session_state.ID)}.")
+    except:
+        st.title("Welcome back.")
     
+    st.title("Tra cứu thông tin")
+
     package = get_data("Package")
 
     with st.container():
         st.title("Gói sản phẩm.")
         st.dataframe(package)
-
-
-    st.title("Dashboard")
 
     doctor = get_data("Doctor")
     patient = get_data("Patient")
@@ -38,22 +42,27 @@ if navbar == "Home":
 
     col1, col2 = st.columns(2)
 
-    with col1:
-        with st.container():
-            st.header("Danh sách bệnh nhân")
-            st.dataframe(patient)
-        with st.container():
-            st.header("Danh sách bác sĩ")
-            st.dataframe(doctor)
+    with st.container():
+        st.header("Bệnh nhân")
+        st.dataframe(patient)
 
-    with col2:
-        with st.container():
-            st.header("Danh sách lịch hẹn")
-            st.dataframe(new_appointment)
-        with st.container():
-            st.header("Danh sách tài khoản")
-            st.dataframe(account)
+    with st.container():
+        st.header("Bác sĩ")
+        st.dataframe(doctor)
 
+
+    with st.container():
+        st.header("Lịch hẹn")
+        st.dataframe(new_appointment)
+    with st.container():
+        st.header("Tài khoản")
+        st.dataframe(account)
+
+    payment = get_infor_customer()
+
+    with st.container():
+        st.header("Lịch sử thanh toán")
+        st.dataframe(payment)
 
 elif  navbar == "Update":
     st.title("Gói sản phẩm") ## part 1
@@ -101,5 +110,6 @@ elif  navbar == "Update":
 elif navbar == "Logout":
     st.session_state.clear()
     st.switch_page("main.py")
+
 
 set_sidebar()
