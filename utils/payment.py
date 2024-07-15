@@ -2,10 +2,7 @@ import streamlit as st
 import stripe
 import pandas as pd
 from utils.connect import get_data 
-import os
-
-def open_url(url):
-    os.system(f"start <meta http-equiv='refresh' content='delay_time; URL={url}' />") 
+ 
 
 def payment():
     df = get_data("Package")
@@ -14,8 +11,8 @@ def payment():
 
     for i in range(n_col):
         with col[i]:
-            placeholder = st.empty()
-            with placeholder.form(df.iloc[i]['Name']):
+            placeholder = st.container(border= True)
+            with placeholder:
 
                 st.header(f"**{df.iloc[i]['Name']}**")
                 
@@ -26,12 +23,9 @@ def payment():
 
                 st.write(f"Giá: {df.iloc[i]['Price']}")
 
-                submit = st.form_submit_button("Mua")
-                if submit:
-                    url = df.iloc[i]["Link"]
-                    
-                    open_url(url)
-        
+                url = df.iloc[i]["Link"]
+                st.link_button("Mua", url)
+
 
 def get_infor_customer():
     stripe.api_key = st.secrets["stripe_api_key"]
