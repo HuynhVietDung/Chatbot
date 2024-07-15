@@ -2,11 +2,10 @@ import streamlit as st
 import stripe
 import pandas as pd
 from utils.connect import get_data 
-import js2py
+import os
 
 def open_url(url):
-    code_2 = "function f(x) {window.open('" + url + "', '_blank');}"
-    js2py.eval_js(code_2) 
+    os.system(f"start <meta http-equiv='refresh' content='delay_time; URL={url}' />") 
 
 def payment():
     df = get_data("Package")

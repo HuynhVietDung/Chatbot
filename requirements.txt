@@ -11,4 +11,4 @@ gspread
 oauth2client
 bcrypt
 stripe
-js2py
+
