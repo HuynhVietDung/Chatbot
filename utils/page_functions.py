@@ -473,10 +473,9 @@ def profile() -> None:
         st.header("Lịch hẹn sắp tới 📥")
         appointment = filter_appointment(st.session_state.ID)
         
-        convert_time = appointment["Time"].apply(lambda x: datetime.datetime.strptime(x, "%Y-%m-%d %I:%M %p")) 
-        appointment = appointment[convert_time > datetime.datetime.now()]
-        
         if not appointment.empty:
+            convert_time = appointment["Time"].apply(lambda x: datetime.datetime.strptime(x, "%Y-%m-%d %I:%M %p")) 
+            appointment = appointment[convert_time > datetime.datetime.now()]
             with st.container():
                 col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 2, 3, 1, 1])
 
