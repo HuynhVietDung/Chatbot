@@ -1,9 +1,12 @@
 import streamlit as st  
-import webbrowser
 import stripe
 import pandas as pd
 from utils.connect import get_data 
+import js2py
 
+def open_url(url):
+    code_2 = "function f(x) {window.open({}, '_blank');}".format(url)
+    js2py.eval_js(code_2) 
 
 def payment():
     df = get_data("Package")
@@ -28,9 +31,8 @@ def payment():
                 if submit:
                     url = df.iloc[i]["Link"]
                     
-                    webbrowser.open_new_tab(url)
+                    open_url(url)
         
-
 
 def get_infor_customer():
     stripe.api_key = st.secrets["stripe_api_key"]
