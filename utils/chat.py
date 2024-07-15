@@ -12,7 +12,7 @@ from utils.crud import update_use
 from utils.payment import payment, upgrade_account
 
 def chatbot():
-    @st.cache_resource(ttl=3)
+    @st.cache_resource(ttl="1d")
     def load_data():
         df = get_data("Doctor")
         df.to_csv("Doctor.csv", index=False)
@@ -45,6 +45,7 @@ def chatbot():
             # if st.session_state.ID == df.iloc[0]["ID"]:
             #     update_use(st.session_state.ID, use=2)
             upgrade_account(st.session_state.ID)
+            
 
         if use == 1:
             if (

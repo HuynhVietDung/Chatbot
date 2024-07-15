@@ -550,8 +550,7 @@ def profile() -> None:
 
         ################ Payment History ################
         st.header("Lịch sử giao dịch")
-        payment = get_infor_customer()
-        payment = payment[payment["ID"] == st.session_state.ID]
+        payment = get_infor_customer(st.session_state.ID)
 
         if not payment.empty:
             with st.container():
@@ -576,7 +575,7 @@ def profile() -> None:
                     
                     col3.write(row["Email"])
                     
-                    col4.write(row["Amount"])
+                    col4.write(str(row["Amount"]) + " VND")
         else:
             st.write("Chưa có giao dịch nào")
 
