@@ -9,10 +9,10 @@ from langchain_community.document_loaders.csv_loader import CSVLoader
 from langchain.chains.question_answering import load_qa_chain
 from utils.connect import get_data
 from utils.crud import update_use
-from utils.payment import payment, get_infor_customer, upgrade_account
+from utils.payment import payment, upgrade_account
 
 def chatbot():
-    @st.cache_resource
+    @st.cache_resource(ttl=3)
     def load_data():
         df = get_data("Doctor")
         df.to_csv("Doctor.csv", index=False)

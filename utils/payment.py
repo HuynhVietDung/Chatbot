@@ -26,7 +26,7 @@ def payment():
                 url = df.iloc[i]["Link"]
                 st.link_button("Mua", url)
 
-
+@st.cache_data(ttl=3)
 def get_infor_customer():
     stripe.api_key = st.secrets["stripe_api_key"]
 
