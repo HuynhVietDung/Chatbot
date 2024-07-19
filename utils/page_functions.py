@@ -51,7 +51,7 @@ def set_flag():
         st.session_state.is_forgotten = False
     
 
-def set_default_page(page="Home") -> None:
+def set_default_page(page="Trang chủ") -> None:
     if "default_page" not in st.session_state:
         st.session_state.default_page = page
     else:

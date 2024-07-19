@@ -16,24 +16,24 @@ from utils.page_functions import (
 st.set_page_config(page_title="Doctor AI", page_icon="👨‍🔬", layout="wide")
 set_default_page()
 
-navbar = st_navbar(["Home", "Chat", "Search", "Appointment", "Login"])
+navbar = st_navbar(["Trang chủ", "Tư vấn", "Tìm kiếm", "Đặt hẹn", "Đăng nhập"])
 set_sessionID()
 
 create_credentials()
 
-if navbar == "Home":
+if navbar == "Trang chủ":
     home()
 
-elif navbar == "Chat":
+elif navbar == "Tư vấn":
     st.warning("Đăng nhập để sử dụng tính năng này")
 
-elif navbar == "Search":
+elif navbar == "Tìm kiếm":
     search_drugs()
 
-elif navbar == "Appointment":
+elif navbar == "Đặt hẹn":
     st.warning("Đăng nhập để sử dụng tính năng này")
 
-elif navbar == "Login":
+elif navbar == "Đăng nhập":
     set_flag()
 
     if st.session_state.is_login:

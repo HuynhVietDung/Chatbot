@@ -11,10 +11,10 @@ st.set_page_config(page_title="Doctor AI", page_icon="👨‍🔬", layout="wide
 
 create_credentials()
 navbar = st_navbar(
-    ["Home", "Update", "Logout"]
+    ["Trang chủ ", "Cập nhật", "Đăng xuất"]
 )
 
-if navbar == "Home":
+if navbar == "Trang chủ":
     try:
         st.title(f"Welcome back {find_accountEmail(st.session_state.ID)}.")
     except:
@@ -64,7 +64,7 @@ if navbar == "Home":
         st.header("Lịch sử thanh toán")
         st.dataframe(payment)
 
-elif  navbar == "Update":
+elif  navbar == "Cập nhật":
     st.title("Gói sản phẩm") ## part 1
 
     if "form_state" not in st.session_state:
@@ -107,9 +107,8 @@ elif  navbar == "Update":
         st.session_state.form6_state = True
         delete_doctor_form()
 
-elif navbar == "Logout":
+elif navbar == "Đăng xuất":
     st.session_state.clear()
     st.switch_page("main.py")
-
 
 set_sidebar()

@@ -8,14 +8,14 @@ import time
 
 st.set_page_config(page_title="Use", page_icon="👨‍🔬", layout="wide")
 navbar = st_navbar(
-    ["Home", "Chat", "Search", "Appointment", "Profile", "Logout"], selected="Profile"
+    ["Trang chủ", "Tư vấn", "Tìm kiếm", "Đặt hẹn", "Gói sản phẩm", "Hồ sơ", "Đăng xuất"], selected="Hồ sơ"
 )
 
-if navbar == "Logout":
+if navbar == "Đăng xuất":
     st.session_state.clear()
     st.switch_page("main.py")
 
-elif navbar == "Profile":
+elif navbar == "Hồ sơ":
     placeholder = st.empty()
     with placeholder.form("Chỉnh sửa lịch hẹn"):
         st.title("Chỉnh sửa lịch hẹn")

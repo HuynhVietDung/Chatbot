@@ -14,31 +14,31 @@ if "ID" not in st.session_state:
     st.switch_page("main.py")
 
 navbar = st_navbar(
-    ["Home", "Chat", "Search", "Appointment", "Payment", "Profile", "Logout"],
+    ["Trang chủ", "Tư vấn", "Tìm kiếm", "Đặt hẹn", "Gói sản phẩm", "Hồ sơ", "Đăng xuất"],
     selected=st.session_state.default_page,
 )
 
-if navbar == "Home":
+if navbar == "Trang chủ":
     home()
 
-elif navbar == "Chat":
+elif navbar == "Tư vấn":
     upgrade_account(st.session_state.ID)
     chatbot()
     
-elif navbar == "Search":
+elif navbar == "Tìm kiếm":
     search_drugs()
 
-elif navbar == "Appointment":
+elif navbar == "Đặt hẹn":
     appointment()
 
-elif navbar == "Logout":
+elif navbar == "Hồ sơ":
+    profile()
+
+elif navbar == "Gói sản phẩm":
+    payment()
+    
+elif navbar == "Đăng xuất":
     st.session_state.clear()
     st.switch_page("main.py")
 
-elif navbar == "Profile":
-    profile()
-
-elif navbar == "Payment":
-    payment()
-    
 set_sidebar()
