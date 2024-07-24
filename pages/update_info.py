@@ -2,6 +2,7 @@ import streamlit as st
 from streamlit_navigation_bar import st_navbar
 from utils.page_functions import set_default_page, set_sidebar
 from utils.crud import update_patient_record
+from utils.connect import upload_image
 from PIL import Image
 import os
 import time
@@ -46,7 +47,9 @@ elif navbar == "Hồ sơ":
                 os.remove(image_path)
 
             saved_image.save(image_path)
-            image = image_path
+            file_id, web_view_link = upload_image(image_path, image_path, "image/jpg", type = "info")
+            image = f"https://drive.google.com/uc?export=view&id={file_id}"
+            os.remove(image_path)
 
         if st.form_submit_button("Xác nhận"):
             update_patient_record(

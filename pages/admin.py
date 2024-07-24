@@ -4,14 +4,18 @@ from utils.connect import  create_credentials
 from utils.page_functions import set_sidebar, add_package_form, delete_package_form, add_admin, add_doctor,\
 delete_doctor_form, delete_admin_form
 from utils.connect import get_data
-from utils.payment import get_infor_customer
-from utils.crud import find_accountEmail
+from utils.crud import find_accountEmail, update_flag, find_accountID, update_use
+import time
 
 st.set_page_config(page_title="Doctor AI", page_icon="👨‍🔬", layout="wide")
 
 create_credentials()
+
+payment = get_data("Payment")
+package = get_data("Package")    
+
 navbar = st_navbar(
-    ["Trang chủ ", "Cập nhật", "Đăng xuất"]
+    ["Trang chủ", "Cập nhật", "Đăng xuất"]
 )
 
 if navbar == "Trang chủ":
@@ -19,10 +23,11 @@ if navbar == "Trang chủ":
         st.title(f"Welcome back {find_accountEmail(st.session_state.ID)}.")
     except:
         st.title("Welcome back.")
-    
-    st.title("Tra cứu thông tin")
 
-    package = get_data("Package")
+    n = len(payment[payment["Flag"] == "0"])
+    st.warning(f"Bạn đang có {n} đơn hàng chờ duyệt.")
+
+    st.title("Tra cứu thông tin")
 
     with st.container():
         st.title("Gói sản phẩm.")
@@ -32,6 +37,7 @@ if navbar == "Trang chủ":
     patient = get_data("Patient")
     appointment = get_data("Appointment")
     account = get_data("Account")
+    
 
     merged_appointment = appointment.join(doctor, how= "inner", lsuffix='_appointment', rsuffix='_doctor').join(patient, how= "inner", lsuffix='_doctor', rsuffix='_patient')
 
@@ -54,17 +60,70 @@ if navbar == "Trang chủ":
     with st.container():
         st.header("Lịch hẹn")
         st.dataframe(new_appointment)
+
     with st.container():
         st.header("Tài khoản")
         st.dataframe(account)
 
-    payment = get_infor_customer()
+    bill = payment[payment["Flag"] == "1"]
 
     with st.container():
         st.header("Lịch sử thanh toán")
-        st.dataframe(payment)
+        st.dataframe(bill)
 
 elif  navbar == "Cập nhật":
+
+    st.title("Đơn hàng chờ duyệt")
+    bill = payment[payment["Flag"] == "0"]
+    if not bill.empty:
+        with st.container():
+            col1, col2, col3, col4, col5, col6, col7, col8 = st.columns(8)
+            col1.write("Mã Đơn hàng")
+            
+            col2.write("Mã Bệnh nhân")
+
+            col3.write("Mã Sản phẩm")
+
+            col4.write("Email")
+            
+            col5.write("Giá")
+
+            col6.write("Thời gian")
+            
+            col7.write("Link ảnh")
+
+
+            for i, row in bill.iterrows():
+                with st.container():
+                    col1, col2, col3, col4, col5, col6, col7, col8 = st.columns(8)
+                    
+                    col1.write(row["ID"])
+
+                    col2.write(row["PatientID"])
+
+                    col3.write(row["PackageID"])
+                    
+                    col4.write(row["Email"])
+
+                    price = package[package["ID"] == row["PackageID"]].iloc[0]["Price"] + " VND"
+
+                    col5.write(price)
+                    
+                    col6.write(row["Time"])
+                    
+                    col7.write(row["Link"])
+
+                    with col8:
+                        del_but = st.button("Xác nhận", key=row["ID"] + row["Time"])
+                        if del_but:
+                            update_flag(row["ID"])
+                            id = find_accountID(row["Email"])
+                            update_use(id=id, use=2)
+                            time.sleep(1)
+                            st.rerun()
+    else:
+        st.info("Hiện không có đơn hàng chờ duyệt")
+
     st.title("Gói sản phẩm") ## part 1
 
     if "form_state" not in st.session_state:

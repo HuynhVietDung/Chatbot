@@ -24,8 +24,11 @@ def payment():
 
                 st.write(f"Giá: {df.iloc[i]['Price']}")
 
-                url = df.iloc[i]["Link"]
-                st.link_button("Mua", url)
+                # url = df.iloc[i]["Link"]
+                # st.link_button("Mua", url)
+                if st.button("Mua", key= df.iloc[i]['Name']):
+                    st.session_state.Package = df.iloc[i]["ID"]
+                    st.switch_page("pages/payment.py")
                 
 
 @st.cache_data(ttl=3)

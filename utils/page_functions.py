@@ -7,7 +7,7 @@ import random
 from PIL import Image
 import os
 import string
-from utils.connect import get_data
+from utils.connect import get_data, get_image
 from utils.payment import get_infor_customer
 from utils.crud import (
     create_patient_record,
@@ -448,7 +448,8 @@ def profile() -> None:
                 st.image("Image/Unknown_person.jpg", width=250)
             else:
                 try:
-                    st.image(Image, width=250)
+                    img = get_image(Image)
+                    st.image(img, width=250)
                 except:
                     st.image("Image/Unknown_person.jpg", width=250)
 
@@ -515,7 +516,7 @@ def profile() -> None:
                             st.rerun()
 
         else:
-            st.write("Hiện không có lịch hẹn nào")
+            st.info("Hiện không có lịch hẹn nào")
         
         ################ Appointment History ################
         st.header("Lịch sử đặt hẹn")
@@ -545,38 +546,47 @@ def profile() -> None:
                     col4.write(row["Description"])
 
         else:
-            st.write("Lịch sử trống")
+            st.info("Lịch sử trống")
 
         ################ Payment History ################
         st.header("Lịch sử giao dịch")
-        payment = get_infor_customer(st.session_state.ID)
+        payment = get_data("Payment")
+        payment = payment[payment["PatientID"] == st.session_state.ID]
+        package = get_data("Package")
 
         if not payment.empty:
             with st.container():
-                col1, col2, col3, col4 = st.columns(4)
+                col1, col2, col3, col4, col5 = st.columns(5)
 
                 # write Header
-                col1.write("ID")
-                col2.write("Tên")
-                col3.write("Email")
-                col4.write("Giá")
+                col1.write("Mã đơn hàng")
+                col2.write("Tên sản phẩm")
+                col3.write("Giá")
+                col4.write("Thời gian")
+                col5.write("Tình trạng")
                 
 
             # write contents
             for i, row in payment.iterrows():
                 with st.container():
                 # write contents
-                    col1, col2, col3, col4= st.columns(4)
+                    col1, col2, col3, col4, col5= st.columns(5)
                     
                     col1.write(row["ID"])
+
+                    pk_row = package[package["ID"] == row["PackageID"]].iloc[0]
+
+                    col2.write(pk_row["Name"])
+                    col3.write(str(pk_row["Price"]) + " VND")
                     
-                    col2.write(row["Name"])
-                    
-                    col3.write(row["Email"])
-                    
-                    col4.write(str(row["Amount"]) + " VND")
+                    col4.write(row["Time"])
+
+                    if row["Flag"] == "0":
+                        col5.write(":red[Chưa xác nhận]")
+                    else:
+                        col5.write(":green[Đã xác nhân]")
         else:
-            st.write("Chưa có giao dịch nào")
+            st.info("Chưa có giao dịch nào")
 
     else:
         st.session_state.clear()

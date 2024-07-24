@@ -1,9 +1,17 @@
-import gspread
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+from googleapiclient.http import MediaFileUpload
 from oauth2client.service_account import ServiceAccountCredentials
+import gspread
+import logging
 import streamlit as st
 import pandas as pd
 import json
 import os
+import requests
+from PIL import Image
+from io import BytesIO
+import numpy as np
 
 @st.cache_data(ttl=2)
 def get_sheet(sheetname: str):
@@ -70,3 +78,46 @@ def create_credentials():
 
         with open("credentials.json", "w") as file:
             json.dump(data, file)
+
+
+def upload_image(file_path, file_name, mime_type, type="bill"):
+
+    """Insert new file to Google Drive.
+
+    Args:
+        file_path (str): The path to the file to be uploaded.
+        file_name (str): The name to be given to the file on Google Drive.
+        mime_type (str): The MIME type of the file.
+
+    Returns:
+        str: The ID of the uploaded file.
+    """
+    scope = [
+        'https://www.googleapis.com/auth/drive.file',
+    ]
+
+    # Load the credentials
+    creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+
+    try:
+        # Create Drive API client
+        service = build("drive", "v3", credentials=creds)
+
+        file_metadata = {"name": file_name, "parents": ["1_7khZLb0MNVydXasSZsKRzbsPzgoyBua"] if type == "bill" else ["1L74LBwba5afBJF6TyQRcR0EZ3XE6Rnth"]}
+        media = MediaFileUpload(file_path, mimetype=mime_type)
+        
+        # Upload file
+        file = service.files().create(body=file_metadata, media_body=media, fields="id").execute()
+        logging.info(f'File ID: {file.get("id")}, Web View Link: {file.get("webViewLink")}')
+        return file.get("id"), file.get("webViewLink")
+
+    except HttpError as error:
+        logging.error(f"An error occurred: {error}")
+        return None
+
+def get_image(url: str):
+    # Fetch the image
+    response = requests.get(url)
+    img = Image.open(BytesIO(response.content))
+    img = np.array(img)
+    return img

@@ -193,3 +193,18 @@ def delete_package(ID: str) -> None:
         row_idx = package_sheet.find(ID).row
         if row_idx != None:
             package_sheet.delete_rows(row_idx)
+
+######################## Payment ########################
+
+def create_payment(id: str, PatientID: str, Email:str, PackageID: str, Time: str, link: str)-> None:
+    package_sheet = get_sheet("Payment")
+
+    idx = len(package_sheet.get_all_values()) + 1
+    package_sheet.insert_row([id, PatientID, PackageID, Email, Time, link, 0], idx)
+
+def update_flag(id: str)-> None:
+    package_sheet = get_sheet("Payment")
+
+    if len(package_sheet.get_all_values()) > 1:
+        row_idx = package_sheet.find(id).row
+        package_sheet.update_cell(row_idx, 7, 1)
