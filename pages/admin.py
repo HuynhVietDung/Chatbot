@@ -7,6 +7,10 @@ from utils.connect import get_data
 from utils.crud import find_accountEmail, update_flag, update_use
 import time
 
+if "ID" not in st.session_state:
+    time.sleep(1)
+    st.switch_page("main.py")
+
 st.set_page_config(page_title="Doctor AI", page_icon="👨‍🔬", layout="wide")
 
 create_credentials()
@@ -105,8 +109,11 @@ elif  navbar == "Cập nhật":
                     
                     col4.write(row["Email"])
 
-                    price = package[package["ID"] == row["PackageID"]].iloc[0]["Price"] + " VND"
-
+                    try:
+                        price = package[package["ID"] == row["PackageID"]].iloc[0]["Price"] + " VND"
+                    except:
+                        price = None
+                        
                     col5.write(price)
                     
                     col6.write(row["Time"])

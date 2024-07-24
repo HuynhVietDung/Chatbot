@@ -7,6 +7,7 @@ import time
 
 def payment():
     df = get_data("Package")
+    df = df[df['IsUsed'] == "1"]
     n_col = len(df)
     col = st.columns(n_col)
 

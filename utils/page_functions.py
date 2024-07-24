@@ -8,7 +8,6 @@ from PIL import Image
 import os
 import string
 from utils.connect import get_data, get_image
-from utils.payment import get_infor_customer
 from utils.crud import (
     create_patient_record,
     create_account,
@@ -641,6 +640,7 @@ def add_package_form()-> None:
 
 def delete_package_form()-> None:
     package = get_data("Package")
+    package = package[package["IsUsed"] == "1"]
 
     if not package.empty:
         with st.container():
@@ -652,20 +652,6 @@ def delete_package_form()-> None:
             col3.write("Giá")
             col4.write("Mô tả")
 
-                        
-
-        # write contents
-        # Custom CSS to adjust spacing between elements
-        st.markdown(
-            """
-            <style>
-            .custom-row-space {
-                margin-bottom: 30px; /* Adjust this value to increase/decrease space */
-            }
-            </style>
-        """,
-            unsafe_allow_html=True,
-        )
 
         for i, row in package.iterrows():
             with st.container():

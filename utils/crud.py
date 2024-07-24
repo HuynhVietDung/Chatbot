@@ -190,7 +190,7 @@ def delete_package(ID: str) -> None:
     if len(package_sheet.get_all_values()) > 1:
         row_idx = package_sheet.find(ID).row
         if row_idx != None:
-            package_sheet.delete_rows(row_idx)
+            package_sheet.update_cell(row_idx, 5, 0)
 
 ######################## Payment ########################
 
