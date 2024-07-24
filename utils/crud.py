@@ -162,17 +162,17 @@ def delete_doctor(ID: str) -> None:
 
 
 ######################## Package ########################
-def create_package(id: str, name:str, price: str, description: str, link: str)-> None:
+def create_package(id: str, name:str, price: str, description: str)-> None:
     package_sheet = get_sheet("Package")
 
     idx = len(package_sheet.get_all_values()) + 1
-    package_sheet.insert_row([id, name, price, description, link], idx)
+    package_sheet.insert_row([id, name, price, description], idx)
 
 def find_packageID(name: str) ->  str:
     df = get_data("Package")
     return df[df["Name"] == name].iloc[0]
 
-def update_package(id: str, name:str, price: str, description: str, link: str)-> None:
+def update_package(id: str, name:str, price: str, description: str)-> None:
     package_sheet = get_sheet("Package")
 
     if len(package_sheet.get_all_values()) > 1:
@@ -184,8 +184,6 @@ def update_package(id: str, name:str, price: str, description: str, link: str)->
             package_sheet.update_cell(row_idx, 3, price)
         if description != "":
             package_sheet.update_cell(row_idx, 4, description)
-        if link != "":
-            package_sheet.update_cell(row_idx, 5, link)
 
 def delete_package(ID: str) -> None:
     package_sheet = get_sheet("Package")

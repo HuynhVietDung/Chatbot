@@ -615,17 +615,13 @@ def add_package_form()-> None:
             r"$\textsf{\normalsize Mô tả tính năng}$:red[$\textsf{\normalsize *}$]",
             height=300
         )
-
-        link = st.text_input(
-            r"$\textsf{\normalsize Link thanh toán}$:red[$\textsf{\normalsize *}$]", type="default"
-        )
         
         # button submit
         submit = st.form_submit_button("Thêm")
         if submit and st.session_state.form_state:
             try:
-                if name != "" and option != "" and price != "" and description != "" and link != "":
-                    create_package(id, name, price, description, link)
+                if name != "" and option != "" and price != "" and description != "":
+                    create_package(id, name, price, description)
 
                     st.success("Thêm gói thành công")
                     
@@ -648,14 +644,14 @@ def delete_package_form()-> None:
 
     if not package.empty:
         with st.container():
-            col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 2, 3, 1, 1])
+            col1, col2, col3, col4, col5 = st.columns([1, 1, 2, 3, 1])
 
             # write Header
-            col1.write("ID")
+            col1.write("Mã gói")
             col2.write("Tên gói")
             col3.write("Giá")
             col4.write("Mô tả")
-            col5.write("Link")
+
                         
 
         # write contents
@@ -674,7 +670,7 @@ def delete_package_form()-> None:
         for i, row in package.iterrows():
             with st.container():
             # write contents
-                col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 2, 3, 1, 1])
+                col1, col2, col3, col4, col5 = st.columns([1, 1, 2, 3, 1])
                 with col1:
                     st.write(f'{row["ID"]}')
                 with col2:    
@@ -684,8 +680,6 @@ def delete_package_form()-> None:
                 with col4:
                     st.write(f'{row["Description"]}')
                 with col5:
-                    st.write(f'{row["Link"]}')
-                with col6:
                     del_but = st.button("Hủy", key=row["ID"])
                 if del_but:
                     delete_package(row["ID"])
@@ -809,8 +803,6 @@ def delete_admin_form()-> None:
             col1.write("ID")
             col2.write("Email")
         
-                        
-
         # write contents
         # Custom CSS to adjust spacing between elements
         st.markdown(

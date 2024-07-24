@@ -4,7 +4,7 @@ from utils.connect import  create_credentials
 from utils.page_functions import set_sidebar, add_package_form, delete_package_form, add_admin, add_doctor,\
 delete_doctor_form, delete_admin_form
 from utils.connect import get_data
-from utils.crud import find_accountEmail, update_flag, find_accountID, update_use
+from utils.crud import find_accountEmail, update_flag, update_use
 import time
 
 st.set_page_config(page_title="Doctor AI", page_icon="👨‍🔬", layout="wide")
@@ -117,8 +117,7 @@ elif  navbar == "Cập nhật":
                         del_but = st.button("Xác nhận", key=row["ID"] + row["Time"])
                         if del_but:
                             update_flag(row["ID"])
-                            id = find_accountID(row["Email"])
-                            update_use(id=id, use=2)
+                            update_use(id=row["PatientID"], use=2)
                             time.sleep(1)
                             st.rerun()
     else:

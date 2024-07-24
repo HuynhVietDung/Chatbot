@@ -29,20 +29,20 @@ elif navbar == "Gói sản phẩm":
         name = st.text_input(
             r"$\textsf{\normalsize Tên}$", type="default"
         )
+
         email = st.text_input(
             r"$\textsf{\normalsize Email}$", type="default"
         )
-        phone = st.text_input(
-            r"$\textsf{\normalsize Số điện thoại}$",
-            type="default",
-        )
 
         PackageID = st.session_state.Package
-
-        gender = st.radio(r"$\textsf{\normalsize Giới tính}$", ("Nam", "Nữ", "Không tiết lộ"))
         
         timezone = pytz.timezone('Asia/Ho_Chi_Minh')
         Time = datetime.now(timezone).strftime("%Y-%m-%d %H:%M:%S")
+        
+        st.write(r"$\textsf{\Large Thông tin chuyển khoản}$")
+        st.write(r"$\textsf{\large Nguyễn Văn Mai}$")
+        st.write(r"$\textsf{\large Số tài khoản: 138608649}$")
+        st.write(r"$\textsf{\large Ngân hàng ACB chi nhánh Sài Gòn}$")
 
         uploaded_file = None
         image_link = ""
