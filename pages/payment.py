@@ -7,6 +7,7 @@ import os
 import time
 from utils.connect import upload_image, get_data
 from datetime import datetime
+import pytz
 import string
 import random
 
@@ -40,7 +41,8 @@ elif navbar == "Gói sản phẩm":
 
         gender = st.radio(r"$\textsf{\normalsize Giới tính}$", ("Nam", "Nữ", "Không tiết lộ"))
         
-        Time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        timezone = pytz.timezone('Asia/Ho_Chi_Minh')
+        Time = datetime.now(timezone).strftime("%Y-%m-%d %H:%M:%S")
 
         uploaded_file = None
         image_link = ""
@@ -70,7 +72,6 @@ elif navbar == "Gói sản phẩm":
                 characters = string.ascii_letters + string.digits
                 ID = "".join(random.choice(characters) for i in range(8))
                 create_payment(id= ID, PatientID= st.session_state.ID,  PackageID=PackageID, Email= email, Time= Time,link = image_link)
-                # st.info(f"https://drive.google.com/file/d/{file_id}/view")
                 st.info("Đang chờ xử lý đơn hàng")
                 time.sleep(10)
                 st.switch_page("./pages/page1.py")
