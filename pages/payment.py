@@ -11,7 +11,7 @@ import pytz
 import string
 import random
 
-st.set_page_config(page_title="Use", page_icon="👨‍🔬", layout="wide")
+st.set_page_config(page_title="Doctor AI", page_icon="👨‍🔬", layout="wide")
 navbar = st_navbar(
     ["Trang chủ", "Tư vấn", "Tìm kiếm", "Đặt hẹn", "Gói sản phẩm", "Hồ sơ", "Đăng xuất"], selected="Gói sản phẩm"
 )
@@ -35,14 +35,23 @@ elif navbar == "Gói sản phẩm":
         )
 
         PackageID = st.session_state.Package
-        
+        packages = get_data("Package")
+        package = packages[packages["ID"] == PackageID].iloc[0]
+
         timezone = pytz.timezone('Asia/Ho_Chi_Minh')
         Time = datetime.now(timezone).strftime("%Y-%m-%d %H:%M:%S")
-        
-        st.write(r"$\textsf{\Large Thông tin chuyển khoản}$")
-        st.write(r"$\textsf{\large Nguyễn Văn Mai}$")
-        st.write(r"$\textsf{\large Số tài khoản: 138608649}$")
-        st.write(r"$\textsf{\large Ngân hàng ACB chi nhánh Sài Gòn}$")
+
+        st.info(fr"""
+                $\textsf{{\Large Thông tin gói}}\\$ 
+                $\textsf{{\normalsize Tên gói: {package['Name']}}}\\$
+                $\textsf{{\normalsize Giá: {package['Price']} VND}}\\$
+                $\textsf{{\normalsize }}\\$
+
+                $\textsf{{\Large Thông tin chuyển khoản}}\\$
+                $\textsf{{\normalsize Nguyễn Văn Mai}}\\$
+                $\textsf{{\normalsize Số tài khoản: 138608649}}\\$
+                $\textsf{{\normalsize Ngân hàng ACB chi nhánh Sài Gòn}}$
+                """)
 
         uploaded_file = None
         image_link = ""
@@ -73,8 +82,6 @@ elif navbar == "Gói sản phẩm":
                 ID = "".join(random.choice(characters) for i in range(8))
                 create_payment(id= ID, PatientID= st.session_state.ID,  PackageID=PackageID, Email= email, Time= Time,link = image_link)
                 st.info("Đang chờ xử lý đơn hàng")
-                time.sleep(10)
-                st.switch_page("./pages/page1.py")
             else: 
                 st.error("Bạn phải điền đầy đủ các thông tin.")
 else:

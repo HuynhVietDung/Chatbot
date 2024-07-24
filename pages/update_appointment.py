@@ -1,12 +1,20 @@
 import streamlit as st
 from streamlit_navigation_bar import st_navbar
-from utils.connect import get_data
+from utils.connect import get_data, get_all_data
 from utils.page_functions import set_default_page, set_sidebar
 from utils.crud import update_appointment
 import datetime
 import time
 
-st.set_page_config(page_title="Use", page_icon="👨‍🔬", layout="wide")
+st.set_page_config(page_title="Doctor AI", page_icon="👨‍🔬", layout="wide")
+
+if "default_page" not in st.session_state or "ID" not in st.session_state or "update_data" not in st.session_state:
+    st.switch_page("main.py")
+
+if st.session_state.update_data == 1:
+    get_all_data()
+    st.session_state.update_data = 0
+
 navbar = st_navbar(
     ["Trang chủ", "Tư vấn", "Tìm kiếm", "Đặt hẹn", "Gói sản phẩm", "Hồ sơ", "Đăng xuất"], selected="Hồ sơ"
 )

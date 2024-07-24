@@ -572,18 +572,22 @@ def profile() -> None:
                     col1, col2, col3, col4, col5= st.columns(5)
                     
                     col1.write(row["ID"])
-
-                    pk_row = package[package["ID"] == row["PackageID"]].iloc[0]
-
-                    col2.write(pk_row["Name"])
-                    col3.write(str(pk_row["Price"]) + " VND")
+                    try:
+                        pk_row = package[package["ID"] == row["PackageID"]].iloc[0]
+                        col2.write(pk_row["Name"])
+                        col3.write(str(pk_row["Price"]) + " VND")
+                    except:
+                        col2.write("")
+                        col3.write("")
                     
                     col4.write(row["Time"])
 
-                    if row["Flag"] == "0":
-                        col5.write(":red[Chưa xác nhận]")
-                    else:
+                    if row["Flag"] == 0:
+                        col5.write(":orange[Đang xử lý]")
+                    elif row["Flag"] == 1:
                         col5.write(":green[Đã xác nhân]")
+                    else:
+                        col5.write(":red[Xác nhận không thành công]")
         else:
             st.info("Chưa có giao dịch nào")
 
@@ -640,7 +644,7 @@ def add_package_form()-> None:
 
 def delete_package_form()-> None:
     package = get_data("Package")
-    package = package[package["IsUsed"] == "1"]
+    package = package[package["IsUsed"] == 1]
 
     if not package.empty:
         with st.container():
@@ -678,7 +682,7 @@ def delete_package_form()-> None:
                     st.rerun()
 
     else:
-        st.write("Hiện không có gói nào")
+        st.info("Hiện không có gói nào")
 
 def add_admin() -> None:
     # form dang ky
@@ -829,7 +833,7 @@ def delete_admin_form()-> None:
                         st.success("Không thể xóa quản trị viên gốc.")
 
     else:
-        st.write("Hiện không có quản trị viên nào khác.")
+        st.info("Hiện không có quản trị viên nào khác.")
 
 
 def delete_doctor_form()-> None:
@@ -871,4 +875,4 @@ def delete_doctor_form()-> None:
                     st.rerun()
 
     else:
-        st.write("Hiện không có bác sĩ nào")
+        st.info("Hiện không có bác sĩ nào")

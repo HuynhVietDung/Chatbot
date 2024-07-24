@@ -3,17 +3,20 @@ from streamlit_navigation_bar import st_navbar
 from utils.connect import  create_credentials
 from utils.page_functions import set_sidebar, add_package_form, delete_package_form, add_admin, add_doctor,\
 delete_doctor_form, delete_admin_form
-from utils.connect import get_data
+from utils.connect import get_data, get_all_data
 from utils.crud import find_accountEmail, update_flag, update_use
 import time
 
-if "ID" not in st.session_state:
+if "ID" not in st.session_state or "update_data" not in st.session_state:
     time.sleep(1)
     st.switch_page("main.py")
 
 st.set_page_config(page_title="Doctor AI", page_icon="👨‍🔬", layout="wide")
 
 create_credentials()
+if st.session_state.update_data == 1:
+    get_all_data()
+    st.session_state.update_data = 0
 
 payment = get_data("Payment")
 package = get_data("Package")    
@@ -24,18 +27,22 @@ navbar = st_navbar(
 
 if navbar == "Trang chủ":
     try:
-        st.title(f"Welcome back {find_accountEmail(st.session_state.ID)}.")
+        st.title(f"Chào mừng trở lại {find_accountEmail(st.session_state.ID)}.")
     except:
         st.title("Welcome back.")
 
-    n = len(payment[payment["Flag"] == "0"])
-    st.warning(f"Bạn đang có {n} đơn hàng chờ duyệt.")
+    n = len(payment[payment["Flag"] == 0])
+    if n != 0:
+        st.warning(f"Bạn đang có {n} đơn hàng chờ duyệt.")
 
     st.title("Tra cứu thông tin")
 
     with st.container():
         st.title("Gói sản phẩm.")
-        st.dataframe(package)
+        sub_package = package.copy()
+        sub_package = sub_package[sub_package["IsUsed"] == 1]
+        sub_package.drop(columns=["IsUsed"], inplace= True)
+        st.dataframe(sub_package, width= 700)
 
     doctor = get_data("Doctor")
     patient = get_data("Patient")
@@ -69,19 +76,22 @@ if navbar == "Trang chủ":
         st.header("Tài khoản")
         st.dataframe(account)
 
-    bill = payment[payment["Flag"] == "1"]
+    bill = payment[payment["Flag"] == 1]
 
     with st.container():
         st.header("Lịch sử thanh toán")
-        st.dataframe(bill)
+        if not bill.empty:
+            st.dataframe(bill)
+        else:
+            st.info("Chưa có hóa đơn đã thanh toán")
 
 elif  navbar == "Cập nhật":
 
     st.title("Đơn hàng chờ duyệt")
-    bill = payment[payment["Flag"] == "0"]
+    bill = payment[payment["Flag"] == 0]
     if not bill.empty:
         with st.container():
-            col1, col2, col3, col4, col5, col6, col7, col8 = st.columns(8)
+            col1, col2, col3, col4, col5, col6, col7, col8, col9 = st.columns(9)
             col1.write("Mã Đơn hàng")
             
             col2.write("Mã Bệnh nhân")
@@ -99,7 +109,7 @@ elif  navbar == "Cập nhật":
 
             for i, row in bill.iterrows():
                 with st.container():
-                    col1, col2, col3, col4, col5, col6, col7, col8 = st.columns(8)
+                    col1, col2, col3, col4, col5, col6, col7, col8, col9 = st.columns(9)
                     
                     col1.write(row["ID"])
 
@@ -121,10 +131,17 @@ elif  navbar == "Cập nhật":
                     col7.write(row["Link"])
 
                     with col8:
-                        del_but = st.button("Xác nhận", key=row["ID"] + row["Time"])
-                        if del_but:
+                        acc_but = st.button("Xác nhận", key=row["ID"] + row["Time"])
+                        if acc_but:
                             update_flag(row["ID"])
                             update_use(id=row["PatientID"], use=2)
+                            time.sleep(1)
+                            st.rerun()
+                    
+                    with col9:
+                        del_but = st.button("Hủy", key=row["ID"] + row["Time"] + row["Link"])
+                        if del_but:
+                            update_flag(row["ID"], flag =-1)
                             time.sleep(1)
                             st.rerun()
     else:

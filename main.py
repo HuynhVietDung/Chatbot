@@ -1,6 +1,6 @@
 import streamlit as st
 from streamlit_navigation_bar import st_navbar
-from utils.connect import create_credentials
+from utils.connect import create_credentials, get_all_data
 from utils.page_functions import (
     home,
     search_drugs,
@@ -19,7 +19,11 @@ set_default_page()
 navbar = st_navbar(["Trang chủ", "Tư vấn", "Tìm kiếm", "Đặt hẹn", "Đăng nhập"])
 set_sessionID()
 
+# initialization
 create_credentials()
+if "update_data" not in st.session_state:
+    get_all_data()
+    st.session_state.update_data = 0
 
 if navbar == "Trang chủ":
     home()

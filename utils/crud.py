@@ -2,7 +2,7 @@ from utils.connect import get_sheet, get_data
 import re
 import pandas as pd
 import bcrypt
-
+import streamlit as st
 
 ## Available Sheets name are "Account", "Appointerment", "Drug", "Doctor", "Patient", "Package"
 
@@ -12,6 +12,7 @@ def create_account(id, email, password, role= "user") -> None:
 
     idx = len(account_sheet.get_all_values()) + 1
     account_sheet.insert_row([id, email, password, 1, role], idx)
+    st.session_state.update_data = 1
 
 
 def update_account(id, email="", password="") -> None:
@@ -25,13 +26,15 @@ def update_account(id, email="", password="") -> None:
 
         if password != "":
             account_sheet.update_cell(row_idx, 3, password)
-            
+    st.session_state.update_data = 1
+       
 def update_use(id, use) -> None:
     account_sheet = get_sheet("Account")
 
     if len(account_sheet.get_all_values()) > 1:
         row_idx = account_sheet.find(id).row
         account_sheet.update_cell(row_idx, 4, use)
+    st.session_state.update_data = 1
 
 def find_accountID(email: str) -> str:
     df = get_data("Account")
@@ -68,6 +71,7 @@ def delete_account(ID:str) -> None:
         row_idx = account_sheet.find(ID).row
         if row_idx != None:
             account_sheet.delete_rows(row_idx)
+    st.session_state.update_data = 1
 
 ######################## Patient ########################
 def create_patient_record(
@@ -76,7 +80,7 @@ def create_patient_record(
     patient_sheet = get_sheet("Patient")
     idx = len(patient_sheet.get_all_values()) + 1
     patient_sheet.insert_row([id, email, name, age, phone, gender, image], idx)
-
+    st.session_state.update_data = 1
 
 def update_patient_record(
     id, email="", name="", age="", phone="", gender="", image=""
@@ -99,13 +103,14 @@ def update_patient_record(
         if image != "":
             patient_sheet.update_cell(row_idx, 7, image)
 
+    st.session_state.update_data = 1
 
 ######################## Appointment ########################
 def create_appointment(ID, PatientID, DoctorID, Time, Description="") -> None:
     appointment_sheet = get_sheet("Appointment")
     idx = len(appointment_sheet.get_all_values()) + 1
-    appointment_sheet.insert_row([ID, PatientID, DoctorID, Time, Description], idx)
-
+    appointment_sheet.insert_row([ID, PatientID, str(DoctorID), Time, Description], idx)
+    st.session_state.update_data = 1
 
 def filter_appointment(PatientID: str) -> pd.DataFrame:
     appointment = get_data("Appointment")
@@ -129,7 +134,7 @@ def update_appointment(id, DoctorID="", Time="", Description="") -> None:
             appointment_sheet.update_cell(row_idx, 4, Time)
         if Description != "":
             appointment_sheet.update_cell(row_idx, 5, Description)
-
+    st.session_state.update_data = 1
 
 def cancel_appointment(ID: str) -> None:
     appointment_sheet = get_sheet("Appointment")
@@ -137,7 +142,7 @@ def cancel_appointment(ID: str) -> None:
         row_idx = appointment_sheet.find(ID).row
         if row_idx != None:
             appointment_sheet.delete_rows(row_idx)
-
+    st.session_state.update_data = 1
 
 ######################## Doctor ########################
 def find_doctor_name(ID: str) ->  str:
@@ -149,6 +154,7 @@ def create_doctor(id, name, title, spec, img, avai, time) -> None:
 
     idx = len(doc_sheet.get_all_values()) + 1
     doc_sheet.insert_row([id, name, title, spec, img, avai, time], idx)
+    st.session_state.update_data = 1
 
 def delete_doctor(ID: str) -> None:
     doctor_sheet = get_sheet("Doctor")
@@ -156,7 +162,8 @@ def delete_doctor(ID: str) -> None:
         row_idx = doctor_sheet.find(ID).row
         if row_idx != None:
             doctor_sheet.delete_rows(row_idx)
-            
+    st.session_state.update_data = 1
+
 ######################## Drug ########################
 
 
@@ -166,7 +173,8 @@ def create_package(id: str, name:str, price: str, description: str)-> None:
     package_sheet = get_sheet("Package")
 
     idx = len(package_sheet.get_all_values()) + 1
-    package_sheet.insert_row([id, name, price, description], idx)
+    package_sheet.insert_row([id, name, price, description, 1], idx)
+    st.session_state.update_data = 1
 
 def find_packageID(name: str) ->  str:
     df = get_data("Package")
@@ -184,6 +192,7 @@ def update_package(id: str, name:str, price: str, description: str)-> None:
             package_sheet.update_cell(row_idx, 3, price)
         if description != "":
             package_sheet.update_cell(row_idx, 4, description)
+    st.session_state.update_data = 1
 
 def delete_package(ID: str) -> None:
     package_sheet = get_sheet("Package")
@@ -191,6 +200,7 @@ def delete_package(ID: str) -> None:
         row_idx = package_sheet.find(ID).row
         if row_idx != None:
             package_sheet.update_cell(row_idx, 5, 0)
+    st.session_state.update_data = 1
 
 ######################## Payment ########################
 
@@ -199,10 +209,12 @@ def create_payment(id: str, PatientID: str, Email:str, PackageID: str, Time: str
 
     idx = len(package_sheet.get_all_values()) + 1
     package_sheet.insert_row([id, PatientID, PackageID, Email, Time, link, 0], idx)
+    st.session_state.update_data = 1
 
-def update_flag(id: str)-> None:
+def update_flag(id: str, flag =1)-> None:
     package_sheet = get_sheet("Payment")
 
     if len(package_sheet.get_all_values()) > 1:
         row_idx = package_sheet.find(id).row
-        package_sheet.update_cell(row_idx, 7, 1)
+        package_sheet.update_cell(row_idx, 7, flag)
+    st.session_state.update_data = 1

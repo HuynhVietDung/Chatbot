@@ -12,6 +12,7 @@ import requests
 from PIL import Image
 from io import BytesIO
 import numpy as np
+import time
 
 @st.cache_data(ttl=2)
 def get_sheet(sheetname: str):
@@ -23,19 +24,22 @@ def get_sheet(sheetname: str):
         "https://www.googleapis.com/auth/drive",
     ]
 
-    # Load the credentials
-    creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+    while True:
+        try:
+            # Load the credentials
+            creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
 
-    # Authorize the client
-    client = gspread.authorize(creds)
+            # Authorize the client
+            client = gspread.authorize(creds)
 
-    spreadsheet = client.open(sheetname)
-    sheet = spreadsheet.worksheets()[0]
+            spreadsheet = client.open(sheetname)
+            sheet = spreadsheet.worksheets()[0]
+            return sheet
+        except: 
+            time.sleep(10)
+    
 
-    return sheet
-
-@st.cache_data(ttl=2)
-def get_data(sheetname: str) -> pd.DataFrame:
+def get_all_data():
     # Define the scope
     scope = [
         "https://spreadsheets.google.com/feeds",
@@ -44,20 +48,36 @@ def get_data(sheetname: str) -> pd.DataFrame:
         "https://www.googleapis.com/auth/drive",
     ]
 
-    # Load the credentials
-    creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+    while True: 
+        try:
+            # Load the credentials
+            creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
 
-    # Authorize the client
-    client = gspread.authorize(creds)
-    spreadsheet = client.open(sheetname)
+            # Authorize the client
+            client = gspread.authorize(creds)
+            for sh in client.openall():
+                sheet = sh.worksheets()[0]
+                # Get all values from the worksheet
+                data = sheet.get_all_values()
 
-    sheet = spreadsheet.worksheets()[0]
+                # Convert to DataFrame
+                df =  pd.DataFrame(data[1:], columns=data[0])
+                file_path = sh.title + ".csv"
+                if os.path.exists(file_path):
+                    # Remove the file
+                    os.remove(file_path)
+                df.to_csv(file_path, index=False)
+                del df
+            return
+        except:
+            time.sleep(10)
 
-    # Get all values from the worksheet
-    data = sheet.get_all_values()
-
-    # Convert to DataFrame
-    return pd.DataFrame(data[1:], columns=data[0])
+def get_data(sheetname: str) -> pd.DataFrame:
+    file_path = sheetname + ".csv"
+    if not os.path.exists(file_path):
+        get_all_data()
+    
+    return pd.read_csv(file_path)
 
 @st.cache_data
 def create_credentials():

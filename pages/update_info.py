@@ -7,7 +7,11 @@ from PIL import Image
 import os
 import time
 
-st.set_page_config(page_title="Use", page_icon="👨‍🔬", layout="wide")
+st.set_page_config(page_title="Doctor AI", page_icon="👨‍🔬", layout="wide")
+
+if "default_page" not in st.session_state or "ID" not in st.session_state or "update_data" not in st.session_state:
+    st.switch_page("main.py")
+
 navbar = st_navbar(
     ["Trang chủ", "Tư vấn", "Tìm kiếm", "Đặt hẹn", "Gói sản phẩm", "Hồ sơ", "Đăng xuất"], selected="Hồ sơ"
 )

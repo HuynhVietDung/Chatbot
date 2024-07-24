@@ -7,7 +7,7 @@ import time
 
 def payment():
     df = get_data("Package")
-    df = df[df['IsUsed'] == "1"]
+    df = df[df['IsUsed'] == 1]
     n_col = len(df)
     col = st.columns(n_col)
 
@@ -23,7 +23,7 @@ def payment():
                 for feature in features[1:]:
                     st.write("✔️ " + feature)
 
-                st.write(f"Giá: {df.iloc[i]['Price']}")
+                st.write(f"Giá: {df.iloc[i]['Price']} VND")
 
                 # url = df.iloc[i]["Link"]
                 # st.link_button("Mua", url)
