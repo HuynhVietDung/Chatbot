@@ -20,10 +20,6 @@ navbar = st_navbar(["Trang chủ", "Tư vấn", "Tìm kiếm", "Đặt hẹn", "
 set_sessionID()
 
 # initialization
-create_credentials()
-if "update_data" not in st.session_state:
-    get_all_data()
-    st.session_state.update_data = 0
 
 if navbar == "Trang chủ":
     home()
@@ -38,6 +34,11 @@ elif navbar == "Đặt hẹn":
     st.warning("Đăng nhập để sử dụng tính năng này")
 
 elif navbar == "Đăng nhập":
+    create_credentials()
+    if "update_data" not in st.session_state:
+        get_all_data()
+        st.session_state.update_data = 0
+        
     set_flag()
 
     if st.session_state.is_login:
