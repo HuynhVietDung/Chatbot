@@ -24,19 +24,19 @@ def get_sheet(sheetname: str):
         "https://www.googleapis.com/auth/drive",
     ]
 
-    # while True:
-    try:
-        # Load the credentials
-        creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+    while True:
+        try:
+            # Load the credentials
+            creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
 
-        # Authorize the client
-        client = gspread.authorize(creds)
+            # Authorize the client
+            client = gspread.authorize(creds)
 
-        spreadsheet = client.open(sheetname)
-        sheet = spreadsheet.worksheets()[0]
-        return sheet
-    except: 
-        time.sleep(1)
+            spreadsheet = client.open(sheetname)
+            sheet = spreadsheet.worksheets()[0]
+            return sheet
+        except: 
+            time.sleep(1)
 
 
 def get_all_data():
@@ -74,7 +74,25 @@ def get_all_data():
 def get_data(sheetname: str) -> pd.DataFrame:
     file_path = sheetname + ".csv"
     if not os.path.exists(file_path):
-        get_all_data()
+        # Define the scope
+        scope = [
+            "https://spreadsheets.google.com/feeds",
+            "https://www.googleapis.com/auth/spreadsheets",
+            "https://www.googleapis.com/auth/drive.file",
+            "https://www.googleapis.com/auth/drive",
+        ]
+        # Load the credentials
+        creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+
+        # Authorize the client
+        client = gspread.authorize(creds)
+        spreadsheet = client.open(sheetname)
+        sheet = spreadsheet.worksheets()[0]
+        # Get all values from the worksheet
+        data = sheet.get_all_values()
+
+        # Convert to DataFrame
+        return  pd.DataFrame(data[1:], columns=data[0])
     
     return pd.read_csv(file_path)
 
