@@ -26,8 +26,9 @@ from utils.crud import (
     delete_package,
     create_doctor,
     delete_account,
-    delete_doctor
+    delete_doctor,
 )
+
 
 def set_sidebar() -> None:
     st.sidebar.image("Image/chusoc.jpg", width=200)
@@ -38,27 +39,29 @@ def set_sidebar() -> None:
     st.sidebar.header("- Tìm kiếm")
     st.sidebar.header("- Đặt hẹn")
 
+
 def set_sessionID() -> None:
     if "ID" not in st.session_state:
         st.session_state.ID = None
+
 
 def set_flag():
     if "is_login" not in st.session_state:
         st.session_state.is_login = True
     if "is_forgotten" not in st.session_state:
         st.session_state.is_forgotten = False
-    
+
 
 def set_default_page(page="Trang chủ") -> None:
     if "default_page" not in st.session_state:
         st.session_state.default_page = page
     else:
         st.session_state.default_page = page
-    
+
 
 def home() -> None:
     st.header("Doctor AI - Trợ Lý Sức Khỏe Cá Nhân Của Bạn")
-    st.image("Image/chatbot.jpg", output_format="auto")    
+    st.image("Image/chatbot.jpg", output_format="auto")
     st.write(
         "Mô Tả: Đưa sức khỏe của bạn vào tay của công nghệ với Doctor AI - chatbot y tế tiên tiến nhất, hỗ trợ bạn từ việc chẩn đoán ban đầu đến quản lý bệnh mãn tính."
     )
@@ -92,21 +95,21 @@ def register() -> None:
     placeholder = st.empty()
     with placeholder.form("Chưa có tài khoản"):
         st.markdown("### Đăng ký")
-        email2 = st.text_input(r"$\textsf{\normalsize Email}$:red[$\textsf{\normalsize *}$]")
+        email2 = st.text_input(
+            r"$\textsf{\normalsize Email}$:red[$\textsf{\normalsize *}$]"
+        )
 
         characters = string.ascii_letters + string.digits
         id = "".join(random.choice(characters) for i in range(8))
-        name = st.text_input(
-            r"$\textsf{\normalsize Tên}$", type="default"
-        )
-        age = st.text_input(
-            r"$\textsf{\normalsize Tuổi}$", type="default"
-        )
+        name = st.text_input(r"$\textsf{\normalsize Tên}$", type="default")
+        age = st.text_input(r"$\textsf{\normalsize Tuổi}$", type="default")
         phone = st.text_input(
             r"$\textsf{\normalsize Số điện thoại}$",
             type="default",
         )
-        gender = st.radio(r"$\textsf{\normalsize Giới tính}$", ("Nam", "Nữ", "Không tiết lộ"))
+        gender = st.radio(
+            r"$\textsf{\normalsize Giới tính}$", ("Nam", "Nữ", "Không tiết lộ")
+        )
 
         password = st.text_input(
             r"$\textsf{\normalsize Mật khẩu}$:red[$\textsf{\normalsize *}$]",
@@ -139,12 +142,15 @@ def register() -> None:
             else:
                 st.warning("Email/Mật khẩu không hợp lệ")
 
+
 def reset_password() -> None:
     placeholder = st.empty()
 
     with placeholder.form("Quên mật khẩu"):
         st.markdown("### Quên mật khẩu")
-        email = st.text_input(r"$\textsf{\normalsize Email}$:red[$\textsf{\normalsize *}$]")
+        email = st.text_input(
+            r"$\textsf{\normalsize Email}$:red[$\textsf{\normalsize *}$]"
+        )
 
         new_pass = st.text_input(
             r"$\textsf{\normalsize Mật khẩu}$:red[$\textsf{\normalsize *}$]",
@@ -166,7 +172,7 @@ def reset_password() -> None:
             if is_existed(email) and password == new_pass:
                 id = find_accountID(email)
                 update_account(id, password=hash_pass(new_pass))
-                st.session_state.ID = id 
+                st.session_state.ID = id
 
                 time.sleep(1)
                 st.success("Đổi mật khẩu thành công")
@@ -175,7 +181,8 @@ def reset_password() -> None:
             else:
                 st.warning("Email chưa đăng ký tài khoản")
 
-def login() -> None:    
+
+def login() -> None:
     # form login
     placeholder = st.empty()
     with placeholder.form("login"):
@@ -184,20 +191,20 @@ def login() -> None:
         password = st.text_input("Mật khẩu", type="password")
         # button submit
         submit = st.form_submit_button("Đăng nhập")
-        
-    if password != "" and email != "": 
+
+    if password != "" and email != "":
         if is_valid_email(email):
             # check email
             if is_existed(email):
                 # check password
                 actual_pass = get_password(email)
-    
+
                 # encode password
                 if check_pass(password, actual_pass):
                     st.success("Đăng nhập thành công")
                     user_id = find_accountID(email)
                     time.sleep(0.5)
-    
+
                     st.session_state.ID = user_id
                     if find_role(user_id) == "admin":
                         st.switch_page("./pages/admin.py")
@@ -210,6 +217,7 @@ def login() -> None:
         else:
             st.error("Email không hợp lệ")
 
+
 def search_drugs() -> None:
     def find_drug(df, text_search):
         # Filter the dataframe using masks
@@ -219,7 +227,6 @@ def search_drugs() -> None:
             df_search = df[m1 | m2]
             return df_search
         return pd.DataFrame()
-    
 
     st.header("Công Cụ Tìm Kiếm Thuốc")
 
@@ -273,8 +280,8 @@ def appointment() -> None:
 
     def select_day(day):
         st.session_state["selected_day"] = day
-    
-    col1, col2, col3 = st.columns([3,3,2])
+
+    col1, col2, col3 = st.columns([3, 3, 2])
     with col2:
         st.title("Đặt Lịch Hẹn Bác Sĩ")
 
@@ -471,54 +478,59 @@ def profile() -> None:
         ################# Appointment #################
         st.header("Lịch hẹn sắp tới 📥")
         appointment = filter_appointment(st.session_state.ID)
-        
+
         if not appointment.empty:
-            convert_time = appointment["Time"].apply(lambda x: datetime.datetime.strptime(x, "%Y-%m-%d %I:%M %p")) 
+            convert_time = appointment["Time"].apply(
+                lambda x: datetime.datetime.strptime(x, "%Y-%m-%d %I:%M %p")
+            )
             appointment = appointment[convert_time > datetime.datetime.now()]
-            with st.container():
-                col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 2, 3, 1, 1])
-
-                # write Header
-                col1.write("ID")
-                col2.write("Bác sĩ")
-                col3.write("Thời gian")
-                col4.write("Mô tả")
-                
-
-            # write contents
-            for i, row in appointment.iterrows():
+            if not appointment.empty():
                 with st.container():
-                # write contents
                     col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 2, 3, 1, 1])
-                    
-                    col1.write(row["ID"])
-                    
-                    col2.write(find_doctor_name(row["DoctorID"]))
-                    
-                    col3.write(row["Time"])
-                    
-                    col4.write(row["Description"])
-                    with col5:
-                        change_but = st.button("Thay đổi", key=i)
-                        if change_but:
-                            if "app_id" not in st.session_state:
-                                st.session_state.app_id = row["ID"]
-                            if "app_doctor_id" not in st.session_state:
-                                st.session_state.app_doctor_id = row["DoctorID"]
-                            st.switch_page("./pages/update_appointment.py")
 
-                    with col6:
-                        del_but = st.button("Hủy", key=row["ID"])
-                        if del_but:
-                            cancel_appointment(row["ID"])
-                            st.rerun()
+                    # write Header
+                    col1.write("ID")
+                    col2.write("Bác sĩ")
+                    col3.write("Thời gian")
+                    col4.write("Mô tả")
 
+                # write contents
+                for i, row in appointment.iterrows():
+                    with st.container():
+                        # write contents
+                        col1, col2, col3, col4, col5, col6 = st.columns(
+                            [1, 1, 2, 3, 1, 1]
+                        )
+
+                        col1.write(row["ID"])
+
+                        col2.write(find_doctor_name(row["DoctorID"]))
+
+                        col3.write(row["Time"])
+
+                        col4.write(row["Description"])
+                        with col5:
+                            change_but = st.button("Thay đổi", key=i)
+                            if change_but:
+                                if "app_id" not in st.session_state:
+                                    st.session_state.app_id = row["ID"]
+                                if "app_doctor_id" not in st.session_state:
+                                    st.session_state.app_doctor_id = row["DoctorID"]
+                                st.switch_page("./pages/update_appointment.py")
+
+                        with col6:
+                            del_but = st.button("Hủy", key=row["ID"])
+                            if del_but:
+                                cancel_appointment(row["ID"])
+                                st.rerun()
+            else:
+                st.info("Hiện không có lịch hẹn nào")
         else:
             st.info("Hiện không có lịch hẹn nào")
-        
+
         ################ Appointment History ################
         st.header("Lịch sử đặt hẹn")
-        appointment = filter_appointment(st.session_state.ID)        
+        appointment = filter_appointment(st.session_state.ID)
         if not appointment.empty:
             with st.container():
                 col1, col2, col3, col4 = st.columns(4)
@@ -528,19 +540,19 @@ def profile() -> None:
                 col2.write("Bác sĩ")
                 col3.write("Thời gian")
                 col4.write("Mô tả")
-                
+
             # write contents
             for i, row in appointment.iterrows():
                 with st.container():
-                # write contents
-                    col1, col2, col3, col4= st.columns(4)
-                    
+                    # write contents
+                    col1, col2, col3, col4 = st.columns(4)
+
                     col1.write(row["ID"])
-                    
+
                     col2.write(find_doctor_name(row["DoctorID"]))
-                    
+
                     col3.write(row["Time"])
-                    
+
                     col4.write(row["Description"])
 
         else:
@@ -562,14 +574,13 @@ def profile() -> None:
                 col3.write("Giá")
                 col4.write("Thời gian")
                 col5.write("Tình trạng")
-                
 
             # write contents
             for i, row in payment.iterrows():
                 with st.container():
-                # write contents
-                    col1, col2, col3, col4, col5= st.columns(5)
-                    
+                    # write contents
+                    col1, col2, col3, col4, col5 = st.columns(5)
+
                     col1.write(row["ID"])
                     try:
                         pk_row = package[package["ID"] == row["PackageID"]].iloc[0]
@@ -578,7 +589,7 @@ def profile() -> None:
                     except:
                         col2.write("")
                         col3.write("")
-                    
+
                     col4.write(row["Time"])
 
                     if row["Flag"] == 0:
@@ -595,29 +606,32 @@ def profile() -> None:
         st.switch_page("main.py")
 
 
-def add_package_form()-> None:
+def add_package_form() -> None:
     placeholder = st.empty()
     with placeholder.form("Thêm gói"):
         st.markdown("### Thêm gói")
-        name = st.text_input(r"$\textsf{\normalsize Tên gói}$:red[$\textsf{\normalsize *}$]")
+        name = st.text_input(
+            r"$\textsf{\normalsize Tên gói}$:red[$\textsf{\normalsize *}$]"
+        )
 
         characters = string.ascii_letters + string.digits
         id = "".join(random.choice(characters) for i in range(8))
 
         option = st.selectbox(
             r"$\textsf{\normalsize Thời hạn}$:red[$\textsf{\normalsize *}$]",
-            ("Tuần", "Tháng", "Năm")
+            ("Tuần", "Tháng", "Năm"),
         )
 
         price = st.text_input(
-            r"$\textsf{\normalsize Giá gói}$:red[$\textsf{\normalsize *}$]", type="default"
+            r"$\textsf{\normalsize Giá gói}$:red[$\textsf{\normalsize *}$]",
+            type="default",
         )
 
         description = st.text_area(
             r"$\textsf{\normalsize Mô tả tính năng}$:red[$\textsf{\normalsize *}$]",
-            height=300
+            height=300,
         )
-        
+
         # button submit
         submit = st.form_submit_button("Thêm")
         if submit and st.session_state.form_state:
@@ -626,7 +640,7 @@ def add_package_form()-> None:
                     create_package(id, name, price, description)
 
                     st.success("Thêm gói thành công")
-                    
+
                     try:
                         del st.session_state.form_state
                     except:
@@ -638,10 +652,9 @@ def add_package_form()-> None:
                     st.error("Điền thiếu thông tin")
             except:
                 st.error("Có lỗi xảy ra trong quá trình xử lý")
-            
 
 
-def delete_package_form()-> None:
+def delete_package_form() -> None:
     package = get_data("Package")
     package = package[package["IsUsed"] == 1]
 
@@ -655,14 +668,13 @@ def delete_package_form()-> None:
             col3.write("Giá")
             col4.write("Mô tả")
 
-
         for i, row in package.iterrows():
             with st.container():
-            # write contents
+                # write contents
                 col1, col2, col3, col4, col5 = st.columns([1, 1, 2, 3, 1])
                 with col1:
                     st.write(f'{row["ID"]}')
-                with col2:    
+                with col2:
                     st.write(f'{row["Name"]}')
                 with col3:
                     st.write(f'{row["Price"]}')
@@ -683,12 +695,15 @@ def delete_package_form()-> None:
     else:
         st.info("Hiện không có gói nào")
 
+
 def add_admin() -> None:
     # form dang ky
     placeholder = st.empty()
     with placeholder.form("Đăng ký tài khoản quản trị viên mới"):
         st.markdown("### Đăng ký tài khoản quản trị viên mới")
-        email2 = st.text_input(r"$\textsf{\normalsize Email}$:red[$\textsf{\normalsize *}$]")
+        email2 = st.text_input(
+            r"$\textsf{\normalsize Email}$:red[$\textsf{\normalsize *}$]"
+        )
 
         characters = string.ascii_letters + string.digits
         id = "".join(random.choice(characters) for i in range(8))
@@ -713,7 +728,7 @@ def add_admin() -> None:
         if submit:
             if not is_existed(email2) and is_valid_email(email2) and flag:
                 hash_pw = hash_pass(password)
-                create_account(id, email2, hash_pw, role= "admin")
+                create_account(id, email2, hash_pw, role="admin")
 
                 st.session_state.ID = id
                 st.success("Đăng ký thành công")
@@ -727,25 +742,26 @@ def add_admin() -> None:
             else:
                 st.warning("Email/Mật khẩu không hợp lệ")
 
-def add_doctor()-> None:
+
+def add_doctor() -> None:
     # form dang ky
     placeholder = st.empty()
     with placeholder.form("Đăng ký thông tin bác sĩ"):
         st.markdown("### Đăng ký thông tin bác sĩ")
-        name = st.text_input(r"$\textsf{\normalsize Tên}$:red[$\textsf{\normalsize *}$]")
+        name = st.text_input(
+            r"$\textsf{\normalsize Tên}$:red[$\textsf{\normalsize *}$]"
+        )
 
         characters = string.ascii_letters + string.digits
         id = "".join(random.choice(characters) for i in range(8))
 
-        title = st.text_input(
-            r"$\textsf{\normalsize Chức vụ}$", type="default"
-        )
-        spec = st.text_input(
-            r"$\textsf{\normalsize Chuyên khoa}$", type="default"
+        title = st.text_input(r"$\textsf{\normalsize Chức vụ}$", type="default")
+        spec = st.text_input(r"$\textsf{\normalsize Chuyên khoa}$", type="default")
+
+        uploaded_file = st.file_uploader(
+            r"$\textsf{\normalsize Ảnh}$", type=["jpg", "jpeg", "png"]
         )
 
-        uploaded_file = st.file_uploader(r"$\textsf{\normalsize Ảnh}$", type=["jpg", "jpeg", "png"])
-        
         if uploaded_file == None:
             image = ""
         else:
@@ -757,7 +773,7 @@ def add_doctor()-> None:
 
             saved_image.save(image_path)
             image = image_path
-        
+
         avai = st.text_input(
             r"$\textsf{\normalsize Ngày khám}$:red[$\textsf{\normalsize *}$]",
         )
@@ -779,8 +795,8 @@ def add_doctor()-> None:
             # st.rerun()
 
 
-def delete_admin_form()-> None:
-    admin = get_data("Account") 
+def delete_admin_form() -> None:
+    admin = get_data("Account")
     admin = admin[admin["Role"] == "admin"]
     admin = admin[admin["ID"] != st.session_state.ID]
 
@@ -791,7 +807,7 @@ def delete_admin_form()-> None:
             # write Header
             col1.write("ID")
             col2.write("Email")
-        
+
         # write contents
         # Custom CSS to adjust spacing between elements
         st.markdown(
@@ -807,15 +823,15 @@ def delete_admin_form()-> None:
 
         for i, row in admin.iterrows():
             with st.container():
-            # write contents
+                # write contents
                 col1, col2, col3 = st.columns(3)
 
                 with col1:
                     st.write(f'{row["ID"]}')
-                with col2:    
+                with col2:
                     st.write(f'{row["Email"]}')
                 with col3:
-                    del_but = st.button("Xóa", key=row["ID"]) 
+                    del_but = st.button("Xóa", key=row["ID"])
 
                 if del_but:
                     if row["Email"] != "admin1@gmail.com":
@@ -835,9 +851,8 @@ def delete_admin_form()-> None:
         st.info("Hiện không có quản trị viên nào khác.")
 
 
-def delete_doctor_form()-> None:
-    doctor = get_data("Doctor") 
-
+def delete_doctor_form() -> None:
+    doctor = get_data("Doctor")
 
     if not doctor.empty:
         with st.container():
@@ -850,18 +865,18 @@ def delete_doctor_form()-> None:
         # write contents
         for i, row in doctor.iterrows():
             with st.container():
-            # write contents
+                # write contents
                 col1, col2, col3, col4 = st.columns(4)
 
                 with col1:
                     st.write(f'{row["ID"]}')
-                with col2:    
+                with col2:
                     st.write(f'{row["Name"]}')
-                with col3:    
+                with col3:
                     st.write(f'{row["Title"]}')
 
                 with col4:
-                    del_but = st.button("Xóa", key=row["Name"]) 
+                    del_but = st.button("Xóa", key=row["Name"])
 
                 if del_but:
                     delete_doctor(row["ID"])
