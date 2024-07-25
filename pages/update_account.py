@@ -12,7 +12,16 @@ if "default_page" not in st.session_state or "ID" not in st.session_state:
     st.switch_page("main.py")
 
 navbar = st_navbar(
-    ["Trang chủ", "Tư vấn", "Tìm kiếm", "Đặt hẹn", "Gói sản phẩm", "Hồ sơ", "Đăng xuất"], selected="Hồ sơ"
+    [
+        "Trang chủ",
+        "Tư vấn",
+        "Tìm kiếm",
+        "Đặt hẹn",
+        "Gói sản phẩm",
+        "Hồ sơ",
+        "Đăng xuất",
+    ],
+    selected="Hồ sơ",
 )
 
 if navbar == "Trang chủ":

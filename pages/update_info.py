@@ -9,11 +9,20 @@ import time
 
 st.set_page_config(page_title="Doctor AI", page_icon="👨‍🔬", layout="wide")
 
-if "default_page" not in st.session_state or "ID" not in st.session_state or "update_data" not in st.session_state:
+if "default_page" not in st.session_state or "ID" not in st.session_state:
     st.switch_page("main.py")
 
 navbar = st_navbar(
-    ["Trang chủ", "Tư vấn", "Tìm kiếm", "Đặt hẹn", "Gói sản phẩm", "Hồ sơ", "Đăng xuất"], selected="Hồ sơ"
+    [
+        "Trang chủ",
+        "Tư vấn",
+        "Tìm kiếm",
+        "Đặt hẹn",
+        "Gói sản phẩm",
+        "Hồ sơ",
+        "Đăng xuất",
+    ],
+    selected="Hồ sơ",
 )
 
 if navbar == "Đăng xuát":
@@ -23,21 +32,21 @@ if navbar == "Đăng xuát":
 elif navbar == "Hồ sơ":
     placeholder = st.empty()
     with placeholder.form("Chỉnh sửa thông tin cá nhân"):
-        name = st.text_input(
-            r"$\textsf{\normalsize Tên}$", type="default"
-        )
-        age = st.text_input(
-            r"$\textsf{\normalsize Tuổi}$", type="default"
-        )
+        name = st.text_input(r"$\textsf{\normalsize Tên}$", type="default")
+        age = st.text_input(r"$\textsf{\normalsize Tuổi}$", type="default")
         phone = st.text_input(
             r"$\textsf{\normalsize Số điện thoại}$",
             type="default",
         )
-        gender = st.radio(r"$\textsf{\normalsize Giới tính}$", ("Nam", "Nữ", "Không tiết lộ"))
+        gender = st.radio(
+            r"$\textsf{\normalsize Giới tính}$", ("Nam", "Nữ", "Không tiết lộ")
+        )
 
         uploaded_file = None
         try:
-            uploaded_file = st.file_uploader(r"$\textsf{\normalsize Chọn ảnh}$", type=["jpg", "jpeg", "png"])
+            uploaded_file = st.file_uploader(
+                r"$\textsf{\normalsize Chọn ảnh}$", type=["jpg", "jpeg", "png"]
+            )
         except:
             st.error("Lỗi không tải được")
 
@@ -51,7 +60,9 @@ elif navbar == "Hồ sơ":
                 os.remove(image_path)
 
             saved_image.save(image_path)
-            file_id, web_view_link = upload_image(image_path, image_path, "image/jpg", type = "info")
+            file_id, web_view_link = upload_image(
+                image_path, image_path, "image/jpg", type="info"
+            )
             image = f"https://drive.google.com/uc?export=view&id={file_id}"
             os.remove(image_path)
 
