@@ -9,7 +9,8 @@ from langchain_community.document_loaders.csv_loader import CSVLoader
 from langchain.chains.question_answering import load_qa_chain
 from utils.connect import get_data
 from utils.crud import update_use
-from utils.payment import payment, upgrade_account
+from utils.payment import payment
+
 
 def chatbot():
     @st.cache_resource(ttl="1d")
@@ -37,15 +38,12 @@ def chatbot():
         df = get_data("Account")
         use = int(df[df["ID"] == st.session_state.ID].iloc[0]["Use"])
 
-
         if use == 0:
             st.write("Bạn vui lòng thanh toán để được tư vấn tiếp.")
             payment()
             # df = get_infor_customer()
             # if st.session_state.ID == df.iloc[0]["ID"]:
             #     update_use(st.session_state.ID, use=2)
-            upgrade_account(st.session_state.ID)
-            
 
         if use == 1:
             if (
@@ -58,7 +56,9 @@ def chatbot():
                     }
                 ]
 
-            if "question_count" not in st.session_state:  # Initialize the question count
+            if (
+                "question_count" not in st.session_state
+            ):  # Initialize the question count
                 st.session_state.question_count = 0
 
             if question := st.chat_input(
@@ -99,7 +99,9 @@ def chatbot():
                                 google_api_key=GOOGLE_API_KEY,
                                 temperature=0.3,
                             )
-                            chain = load_qa_chain(model, chain_type="stuff", prompt=prompt)
+                            chain = load_qa_chain(
+                                model, chain_type="stuff", prompt=prompt
+                            )
                             response = chain(
                                 {"input_documents": chunks, "question": question},
                                 return_only_outputs=True,
@@ -114,7 +116,9 @@ def chatbot():
                             )  # Add response to message history
 
                         else:
-                            update_use(st.session_state.ID, use= 0) # "0" means cannot using chatbot
+                            update_use(
+                                st.session_state.ID, use=0
+                            )  # "0" means cannot using chatbot
                             st.write("Bạn vui lòng thanh toán để được tư vấn tiếp.")
                             payment()
 
@@ -178,8 +182,6 @@ def chatbot():
                         st.session_state.messages.append(
                             message
                         )  # Add response to message history
-
-            
 
     vector_index, chunks = load_data()
     display(vector_index, chunks)
