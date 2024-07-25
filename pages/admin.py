@@ -3,20 +3,17 @@ from streamlit_navigation_bar import st_navbar
 from utils.connect import  create_credentials
 from utils.page_functions import set_sidebar, add_package_form, delete_package_form, add_admin, add_doctor,\
 delete_doctor_form, delete_admin_form
-from utils.connect import get_data, get_all_data
+from utils.connect import get_data
 from utils.crud import find_accountEmail, update_flag, update_use
 import time
 
-if "ID" not in st.session_state or "update_data" not in st.session_state:
+if "ID" not in st.session_state:
     time.sleep(1)
     st.switch_page("main.py")
 
 st.set_page_config(page_title="Doctor AI", page_icon="👨‍🔬", layout="wide")
 
 create_credentials()
-if st.session_state.update_data == 1:
-    get_all_data()
-    st.session_state.update_data = 0
 
 payment = get_data("Payment")
 package = get_data("Package")    

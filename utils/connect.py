@@ -12,109 +12,82 @@ import requests
 from PIL import Image
 from io import BytesIO
 import numpy as np
-import time
 
-@st.cache_data(ttl=2)
+scope = [
+        "https://spreadsheets.google.com/feeds",
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive.file",
+        "https://www.googleapis.com/auth/drive",
+    ]
+
 def get_sheet(sheetname: str):
-    # Define the scope
-    scope = [
-        "https://spreadsheets.google.com/feeds",
-        "https://www.googleapis.com/auth/spreadsheets",
-        "https://www.googleapis.com/auth/drive.file",
-        "https://www.googleapis.com/auth/drive",
-    ]
-
-    while True:
-        try:
-            # Load the credentials
-            creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
-
-            # Authorize the client
-            client = gspread.authorize(creds)
-
-            spreadsheet = client.open(sheetname)
-            sheet = spreadsheet.worksheets()[0]
-            return sheet
-        except: 
-            time.sleep(1)
-
-
-def get_all_data():
-    # Define the scope
-    scope = [
-        "https://spreadsheets.google.com/feeds",
-        "https://www.googleapis.com/auth/spreadsheets",
-        "https://www.googleapis.com/auth/drive.file",
-        "https://www.googleapis.com/auth/drive",
-    ]
     # Load the credentials
     creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
 
     # Authorize the client
     client = gspread.authorize(creds)
- 
-    try:
-        for sh in client.openall():
-            sheet = sh.worksheets()[0]
-            # Get all values from the worksheet
-            data = sheet.get_all_values()
 
-            # Convert to DataFrame
-            df =  pd.DataFrame(data[1:], columns=data[0])
-            file_path = sh.title + ".csv"
-            if os.path.exists(file_path):
-                # Remove the file
-                os.remove(file_path)
-            df.to_csv(file_path, index=False)
-            del df
-        return
-    except:
-        time.sleep(1)
+    spreadsheet = client.open(sheetname)
+    sheet = spreadsheet.worksheets()[0]
+    return sheet
 
 def get_data(sheetname: str) -> pd.DataFrame:
-    file_path = sheetname + ".csv"
-    if not os.path.exists(file_path):
-        # Define the scope
-        scope = [
-            "https://spreadsheets.google.com/feeds",
-            "https://www.googleapis.com/auth/spreadsheets",
-            "https://www.googleapis.com/auth/drive.file",
-            "https://www.googleapis.com/auth/drive",
-        ]
-        # Load the credentials
-        creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+    creds = ServiceAccountCredentials.from_json_keyfile_name("credentials2.json", scope)
 
-        # Authorize the client
-        client = gspread.authorize(creds)
-        spreadsheet = client.open(sheetname)
-        sheet = spreadsheet.worksheets()[0]
-        # Get all values from the worksheet
-        data = sheet.get_all_values()
-
-        # Convert to DataFrame
-        return  pd.DataFrame(data[1:], columns=data[0])
+    # Authorize the client
+    client = gspread.authorize(creds)
+    spreadsheet = client.open(sheetname)
+    sheet = spreadsheet.worksheets()[0]
+    # Get all values from the worksheet
+    data = sheet.get_all_values()
     
-    return pd.read_csv(file_path)
+    df = pd.DataFrame(data[1:], columns=data[0])
 
+    fpath = sheetname+".csv"
+    if os.path.exists(fpath):
+        os.remove(fpath)
+    
+    df.to_csv(fpath, index= False)
+    # Convert to DataFrame
+    return pd.read_csv(fpath)
+    
 @st.cache_data
 def create_credentials():
     if not os.path.isfile("credentials.json"):
         data = {
-            "type": st.secrets["type"],
-            "project_id": st.secrets["project_id"],
-            "private_key_id": st.secrets["private_key_id"],
-            "private_key": st.secrets["private_key"],
-            "client_email": st.secrets["client_email"],
-            "client_id": st.secrets["client_id"],
-            "auth_uri": st.secrets["auth_uri"],
-            "token_uri": st.secrets["token_uri"],
-            "auth_provider_x509_cert_url": st.secrets["auth_provider_x509_cert_url"],
-            "client_x509_cert_url": st.secrets["client_x509_cert_url"],
-            "universe_domain": st.secrets["universe_domain"],
+            "type": st.secrets["credentials1"]["type"],
+            "project_id": st.secrets["credentials1"]["project_id"],
+            "private_key_id": st.secrets["credentials1"]["private_key_id"],
+            "private_key": st.secrets["credentials1"]["private_key"],
+            "client_email": st.secrets["credentials1"]["client_email"],
+            "client_id": st.secrets["credentials1"]["client_id"],
+            "auth_uri": st.secrets["credentials1"]["auth_uri"],
+            "token_uri": st.secrets["credentials1"]["token_uri"],
+            "auth_provider_x509_cert_url": st.secrets["credentials1"]["auth_provider_x509_cert_url"],
+            "client_x509_cert_url": st.secrets["credentials1"]["client_x509_cert_url"],
+            "universe_domain": st.secrets["credentials1"]["universe_domain"],
         }
 
         with open("credentials.json", "w") as file:
             json.dump(data, file)
+
+    if not os.path.isfile("credentials2.json"):
+        data2 = {
+            "type": st.secrets["credentials2"]["type"],
+            "project_id": st.secrets["credentials2"]["project_id"],
+            "private_key_id": st.secrets["credentials2"]["private_key_id"],
+            "private_key": st.secrets["credentials2"]["private_key"],
+            "client_email": st.secrets["credentials2"]["client_email"],
+            "client_id": st.secrets["credentials2"]["client_id"],
+            "auth_uri": st.secrets["credentials2"]["auth_uri"],
+            "token_uri": st.secrets["credentials2"]["token_uri"],
+            "auth_provider_x509_cert_url": st.secrets["credentials2"]["auth_provider_x509_cert_url"],
+            "client_x509_cert_url": st.secrets["credentials2"]["client_x509_cert_url"],
+            "universe_domain": st.secrets["credentials2"]["universe_domain"],
+        }
+
+        with open("credentials2.json", "w") as file:
+            json.dump(data2, file)
 
 
 def upload_image(file_path, file_name, mime_type, type="bill"):

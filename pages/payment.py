@@ -4,7 +4,6 @@ from utils.page_functions import set_default_page, set_sidebar
 from utils.crud import create_payment
 from PIL import Image
 import os
-import time
 from utils.connect import upload_image, get_data
 from datetime import datetime
 import pytz
