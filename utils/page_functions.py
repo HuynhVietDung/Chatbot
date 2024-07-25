@@ -484,7 +484,7 @@ def profile() -> None:
                 lambda x: datetime.datetime.strptime(x, "%Y-%m-%d %I:%M %p")
             )
             appointment = appointment[convert_time > datetime.datetime.now()]
-            if not appointment.empty():
+            if not appointment.empty:
                 with st.container():
                     col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 2, 3, 1, 1])
 
