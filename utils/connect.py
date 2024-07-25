@@ -24,20 +24,20 @@ def get_sheet(sheetname: str):
         "https://www.googleapis.com/auth/drive",
     ]
 
-    while True:
-        try:
-            # Load the credentials
-            creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+    # while True:
+    try:
+        # Load the credentials
+        creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
 
-            # Authorize the client
-            client = gspread.authorize(creds)
+        # Authorize the client
+        client = gspread.authorize(creds)
 
-            spreadsheet = client.open(sheetname)
-            sheet = spreadsheet.worksheets()[0]
-            return sheet
-        except: 
-            time.sleep(10)
-    
+        spreadsheet = client.open(sheetname)
+        sheet = spreadsheet.worksheets()[0]
+        return sheet
+    except: 
+        time.sleep(1)
+
 
 def get_all_data():
     # Define the scope
@@ -47,30 +47,29 @@ def get_all_data():
         "https://www.googleapis.com/auth/drive.file",
         "https://www.googleapis.com/auth/drive",
     ]
+    # Load the credentials
+    creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
 
-    while True: 
-        try:
-            # Load the credentials
-            creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+    # Authorize the client
+    client = gspread.authorize(creds)
+ 
+    try:
+        for sh in client.openall():
+            sheet = sh.worksheets()[0]
+            # Get all values from the worksheet
+            data = sheet.get_all_values()
 
-            # Authorize the client
-            client = gspread.authorize(creds)
-            for sh in client.openall():
-                sheet = sh.worksheets()[0]
-                # Get all values from the worksheet
-                data = sheet.get_all_values()
-
-                # Convert to DataFrame
-                df =  pd.DataFrame(data[1:], columns=data[0])
-                file_path = sh.title + ".csv"
-                if os.path.exists(file_path):
-                    # Remove the file
-                    os.remove(file_path)
-                df.to_csv(file_path, index=False)
-                del df
-            return
-        except:
-            time.sleep(10)
+            # Convert to DataFrame
+            df =  pd.DataFrame(data[1:], columns=data[0])
+            file_path = sh.title + ".csv"
+            if os.path.exists(file_path):
+                # Remove the file
+                os.remove(file_path)
+            df.to_csv(file_path, index=False)
+            del df
+        return
+    except:
+        time.sleep(1)
 
 def get_data(sheetname: str) -> pd.DataFrame:
     file_path = sheetname + ".csv"
