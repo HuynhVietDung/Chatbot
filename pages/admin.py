@@ -13,19 +13,20 @@ from utils.page_functions import (
 from utils.connect import get_data
 from utils.crud import find_accountEmail, update_flag, update_use
 import time
+import pandas as pd
 
 if "ID" not in st.session_state:
     time.sleep(1)
     st.switch_page("main.py")
 
 st.set_page_config(page_title="Doctor AI", page_icon="👨‍🔬", layout="wide")
-
+navbar = st_navbar(
+    ["Trang chủ", "Cập nhật", "Đăng xuất"],
+)
 create_credentials()
 
 payment = get_data("Payment")
 package = get_data("Package")
-
-navbar = st_navbar(["Trang chủ", "Cập nhật", "Đăng xuất"])
 
 if navbar == "Trang chủ":
     try:
@@ -39,66 +40,169 @@ if navbar == "Trang chủ":
 
     st.title("Tra cứu thông tin")
 
-    with st.container():
-        st.title("Gói sản phẩm.")
-        sub_package = package.copy()
-        sub_package = sub_package[sub_package["IsUsed"] == 1]
-        sub_package.drop(columns=["IsUsed"], inplace=True)
-        st.dataframe(sub_package, width=700)
-
     doctor = get_data("Doctor")
+    doctor = doctor[doctor["Flag"] == 1]
     patient = get_data("Patient")
+    patient["Phone"] = patient["Phone"].apply(lambda x: "0" + str(x))
     appointment = get_data("Appointment")
     account = get_data("Account")
 
-    merged_appointment = appointment.join(
-        doctor, how="inner", lsuffix="_appointment", rsuffix="_doctor"
-    ).join(patient, how="inner", lsuffix="_doctor", rsuffix="_patient")
+    merged_appointment = appointment.merge(
+        patient, how="left", left_on="PatientID", right_on="ID"
+    ).merge(doctor, how="left", left_on="DoctorID", right_on="ID")
 
-    new_appointment = merged_appointment[
-        [
-            "ID_appointment",
-            "Name_doctor",
-            "Name_patient",
-            "Time",
-            "Description",
-            "PatientID",
-            "DoctorID",
-        ]
-    ]
-    new_appointment.rename(
-        columns={
-            "ID_appointment": "ID",
-            "Name_doctor": "DoctorName",
-            "Name_patient": "PatientName",
-        },
-        inplace=True,
-    )
+    merged_payment = payment.merge(
+        patient, how="left", left_on="PatientID", right_on="ID"
+    ).merge(package, how="left", left_on="PackageID", right_on="ID")
 
-    col1, col2 = st.columns(2)
+    successful_payment = merged_payment[merged_payment["Flag"] == 1]
+    canceled_payment = merged_payment[merged_payment["Flag"] == -1]
 
+    #### Package
+    with st.container():
+        st.header("Gói sản phẩm.")
+        st.dataframe(
+            package[package["IsUsed"] == 1],
+            width=700,
+            column_config={
+                "Name": "Tên",
+                "Price": "Giá",
+                "Description": "Mô tả tính năng",
+                "IsUsed": None,
+            },
+        )
+
+    #### Patient
     with st.container():
         st.header("Bệnh nhân")
-        st.dataframe(patient)
+        st.dataframe(
+            patient,
+            column_config={
+                "ID": "Mã số",
+                "Email": "Email",
+                "Name": "Tên",
+                "Age": "Tuổi",
+                "Phone": "Số điện thoại",
+                "Gender": "Giới tính",
+                "Image": "Hình ảnh",
+            },
+        )
 
+    #### Doctor
     with st.container():
         st.header("Bác sĩ")
-        st.dataframe(doctor)
+        st.dataframe(
+            doctor,
+            column_config={
+                "ID": "Mã số",
+                "Name": "Tên",
+                "Title": "Chức vụ",
+                "Spectiality": "Chuyên ngành",
+                "Image": "Hình ảnh",
+                "Availability": "Ngày khám",
+                "TimeSlots": "Thời gian khám",
+            },
+        )
 
+    #### Appointment
     with st.container():
         st.header("Lịch hẹn")
-        st.dataframe(new_appointment)
+        st.dataframe(
+            merged_appointment[
+                [
+                    "ID_x",
+                    "PatientID",
+                    "Name_x",
+                    "DoctorID",
+                    "Name_y",
+                    "Time",
+                    "Description",
+                ]
+            ],
+            column_config={
+                "ID_x": "Mã cuộc hẹn",
+                "PatientID": "Mã khách hàng",
+                "Name_x": "Tên khách hàng",
+                "DoctorID": "Mã bác sĩ",
+                "Name_y": "Tên bác sĩ",
+                "Time": "Thời gian",
+                "Description": "Mô tả",
+            },
+        )
 
+    #### Account
     with st.container():
         st.header("Tài khoản")
-        st.dataframe(account)
+        st.dataframe(
+            account,
+            column_config={
+                "ID": "Mã số",
+                "Email": "Email",
+                "Password": "Mật khẩu",
+                "Use": "Loại tài khoản",
+                "Role": "Vai trò",
+            },
+        )
 
-    bill = payment[payment["Flag"] == 1]
-
+    #### Payment History
     with st.container():
         st.header("Lịch sử thanh toán")
-        if not bill.empty:
-            st.dataframe(bill)
+        if not successful_payment.empty:
+            st.dataframe(
+                successful_payment[
+                    [
+                        "ID_x",
+                        "PatientID",
+                        "Name_x",
+                        "Email_x",
+                        "PackageID",
+                        "Name_y",
+                        "Time",
+                        "Link",
+                    ]
+                ],
+                column_config={
+                    "ID_x": "Mã đơn hàng",
+                    "PatientID": "Mã khách hàng",
+                    "Email_x": "Email",
+                    "Name_x": "Tên khách hàng",
+                    "PackageID": "Mã gói",
+                    "Name_y": "Tên gói",
+                    "Time": "Thời gian",
+                    "Link": "Hình ảnh",
+                },
+            )
+        else:
+            st.info("Chưa có hóa đơn đã thanh toán")
+
+    #### Canceled Payment
+    with st.container():
+        st.header("Đơn hàng đã hủy")
+        if not canceled_payment.empty:
+            st.dataframe(
+                canceled_payment[
+                    [
+                        "ID_x",
+                        "PatientID",
+                        "Name_x",
+                        "Email_x",
+                        "PackageID",
+                        "Name_y",
+                        "Time",
+                        "Link",
+                    ]
+                ],
+                column_config={
+                    "ID_x": "Mã đơn hàng",
+                    "PatientID": "Mã khách hàng",
+                    "Email_x": "Email",
+                    "Name_x": "Tên khách hàng",
+                    "PackageID": "Mã gói",
+                    "Name_y": "Tên gói",
+                    "Time": "Thời gian",
+                    "Link": "Hình ảnh",
+                },
+            )
         else:
             st.info("Chưa có hóa đơn đã thanh toán")
 

@@ -10,13 +10,14 @@ from utils.page_functions import (
     set_sessionID,
     set_flag,
     set_default_page,
-    set_sidebar
+    set_sidebar,
 )
 
 st.set_page_config(page_title="Doctor AI", page_icon="👨‍🔬", layout="wide")
 set_default_page()
-navbar = st_navbar(["Trang chủ", "Tư vấn", "Tìm kiếm", "Đặt hẹn", "Đăng nhập"])
-
+navbar = st_navbar(
+    ["Trang chủ", "Tư vấn", "Tìm kiếm", "Đặt hẹn", "Đăng nhập"],
+)
 
 # initialization
 set_sessionID()
@@ -34,12 +35,12 @@ elif navbar == "Tìm kiếm":
 elif navbar == "Đặt hẹn":
     st.warning("Đăng nhập để sử dụng tính năng này")
 
-elif navbar == "Đăng nhập":        
+elif navbar == "Đăng nhập":
     set_flag()
 
     if st.session_state.is_login:
         login()
-        
+
         if st.button("Quên mật khẩu"):
             st.session_state.is_login = False
             st.session_state.is_forgotten = True
@@ -49,7 +50,7 @@ elif navbar == "Đăng nhập":
         if st.button("Đăng ký ngay"):
             st.session_state.is_login = False
             st.rerun()
-        
+
     elif st.session_state.is_forgotten:
         reset_password()
         if st.button("Quay lại"):

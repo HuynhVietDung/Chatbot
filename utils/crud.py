@@ -6,8 +6,9 @@ import streamlit as st
 
 ## Available Sheets name are "Account", "Appointerment", "Drug", "Doctor", "Patient", "Package"
 
+
 ######################## Account ########################
-def create_account(id, email, password, role= "user") -> None:
+def create_account(id, email, password, role="user") -> None:
     account_sheet = get_sheet("Account")
 
     idx = len(account_sheet.get_all_values()) + 1
@@ -25,7 +26,8 @@ def update_account(id, email="", password="") -> None:
 
         if password != "":
             account_sheet.update_cell(row_idx, 3, password)
-       
+
+
 def update_use(id, use) -> None:
     account_sheet = get_sheet("Account")
 
@@ -33,41 +35,51 @@ def update_use(id, use) -> None:
         row_idx = account_sheet.find(id).row
         account_sheet.update_cell(row_idx, 4, use)
 
+
 def find_accountID(email: str) -> str:
     df = get_data("Account")
     return df[df["Email"] == email].iloc[0]["ID"]
+
 
 def find_accountEmail(ID: str) -> str:
     df = get_data("Account")
     return df[df["ID"] == ID].iloc[0]["Email"]
 
-def find_role(id:str) -> str:
+
+def find_role(id: str) -> str:
     df = get_data("Account")
     return df[df["ID"] == id].iloc[0]["Role"]
+
 
 def is_existed(email, df=pd.DataFrame()):
     df = get_data("Account") if df.empty else df
     return email in df["Email"].values
 
+
 def is_valid_email(pw: str) -> bool:
-    return re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', pw)
+    return re.match(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", pw)
+
 
 def get_password(email):
     df = get_data("Account")
     return df[df["Email"] == email].iloc[0]["Password"]
 
+
 def hash_pass(password: str):
-    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
-def check_pass(new_pw: str, old_pw:str):
-    return bcrypt.checkpw(new_pw.encode('utf-8'), old_pw.encode('utf-8'))
 
-def delete_account(ID:str) -> None:
+def check_pass(new_pw: str, old_pw: str):
+    return bcrypt.checkpw(new_pw.encode("utf-8"), old_pw.encode("utf-8"))
+
+
+def delete_account(ID: str) -> None:
     account_sheet = get_sheet("Account")
     if len(account_sheet.get_all_values()) > 1:
         row_idx = account_sheet.find(ID).row
         if row_idx != None:
             account_sheet.delete_rows(row_idx)
+
 
 ######################## Patient ########################
 def create_patient_record(
@@ -76,6 +88,7 @@ def create_patient_record(
     patient_sheet = get_sheet("Patient")
     idx = len(patient_sheet.get_all_values()) + 1
     patient_sheet.insert_row([id, email, name, age, phone, gender, image], idx)
+
 
 def update_patient_record(
     id, email="", name="", age="", phone="", gender="", image=""
@@ -105,6 +118,7 @@ def create_appointment(ID, PatientID, DoctorID, Time, Description="") -> None:
     idx = len(appointment_sheet.get_all_values()) + 1
     appointment_sheet.insert_row([ID, PatientID, str(DoctorID), Time, Description], idx)
 
+
 def filter_appointment(PatientID: str) -> pd.DataFrame:
     appointment = get_data("Appointment")
     if not appointment.empty:
@@ -128,6 +142,7 @@ def update_appointment(id, DoctorID="", Time="", Description="") -> None:
         if Description != "":
             appointment_sheet.update_cell(row_idx, 5, Description)
 
+
 def cancel_appointment(ID: str) -> None:
     appointment_sheet = get_sheet("Appointment")
     if len(appointment_sheet.get_all_values()) > 1:
@@ -135,10 +150,12 @@ def cancel_appointment(ID: str) -> None:
         if row_idx != None:
             appointment_sheet.delete_rows(row_idx)
 
+
 ######################## Doctor ########################
-def find_doctor_name(ID: str) ->  str:
+def find_doctor_name(ID: str) -> str:
     df = get_data("Doctor")
     return df[df["ID"] == ID].iloc[0]["Name"]
+
 
 def create_doctor(id, name, title, spec, img, avai, time) -> None:
     doc_sheet = get_sheet("Doctor")
@@ -146,29 +163,32 @@ def create_doctor(id, name, title, spec, img, avai, time) -> None:
     idx = len(doc_sheet.get_all_values()) + 1
     doc_sheet.insert_row([id, name, title, spec, img, avai, time], idx)
 
+
 def delete_doctor(ID: str) -> None:
     doctor_sheet = get_sheet("Doctor")
     if len(doctor_sheet.get_all_values()) > 1:
         row_idx = doctor_sheet.find(ID).row
         if row_idx != None:
-            doctor_sheet.delete_rows(row_idx)
+            doctor_sheet.update_cell(row_idx, 8, 0)
+
 
 ######################## Drug ########################
 
 
-
 ######################## Package ########################
-def create_package(id: str, name:str, price: str, description: str)-> None:
+def create_package(id: str, name: str, price: str, description: str) -> None:
     package_sheet = get_sheet("Package")
 
     idx = len(package_sheet.get_all_values()) + 1
     package_sheet.insert_row([id, name, price, description, 1], idx)
 
-def find_packageID(name: str) ->  str:
+
+def find_packageID(name: str) -> str:
     df = get_data("Package")
     return df[df["Name"] == name].iloc[0]
 
-def update_package(id: str, name:str, price: str, description: str)-> None:
+
+def update_package(id: str, name: str, price: str, description: str) -> None:
     package_sheet = get_sheet("Package")
 
     if len(package_sheet.get_all_values()) > 1:
@@ -181,6 +201,7 @@ def update_package(id: str, name:str, price: str, description: str)-> None:
         if description != "":
             package_sheet.update_cell(row_idx, 4, description)
 
+
 def delete_package(ID: str) -> None:
     package_sheet = get_sheet("Package")
     if len(package_sheet.get_all_values()) > 1:
@@ -188,15 +209,20 @@ def delete_package(ID: str) -> None:
         if row_idx != None:
             package_sheet.update_cell(row_idx, 5, 0)
 
+
 ######################## Payment ########################
 
-def create_payment(id: str, PatientID: str, Email:str, PackageID: str, Time: str, link: str)-> None:
+
+def create_payment(
+    id: str, PatientID: str, Email: str, PackageID: str, Time: str, link: str
+) -> None:
     package_sheet = get_sheet("Payment")
 
     idx = len(package_sheet.get_all_values()) + 1
     package_sheet.insert_row([id, PatientID, PackageID, Email, Time, link, 0], idx)
 
-def update_flag(id: str, flag =1)-> None:
+
+def update_flag(id: str, flag=1) -> None:
     package_sheet = get_sheet("Payment")
 
     if len(package_sheet.get_all_values()) > 1:

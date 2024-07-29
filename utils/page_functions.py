@@ -286,6 +286,7 @@ def appointment() -> None:
         st.title("Đặt Lịch Hẹn Bác Sĩ")
 
     df = get_data("Doctor")
+    df = df[df["Flag"] == 1]
 
     availability = df["Availability"]
     time_slots = df["TimeSlots"]
@@ -853,6 +854,7 @@ def delete_admin_form() -> None:
 
 def delete_doctor_form() -> None:
     doctor = get_data("Doctor")
+    doctor = doctor[doctor["Flag"] == 1]
 
     if not doctor.empty:
         with st.container():
