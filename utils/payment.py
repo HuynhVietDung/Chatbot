@@ -39,7 +39,7 @@ def payment() -> None:
 
 def update_payment(id: str) -> None:
     all_payment = get_data("Payment")
-    if id in all_payment["PatientID"].values:
+    try:
         individual_payment = all_payment[
             (all_payment["PatientID"] == id) & (all_payment["Flag"] == 1)
         ].iloc[0]
@@ -69,3 +69,5 @@ def update_payment(id: str) -> None:
                     )  # 0 mean normal account
             except:
                 pass
+    except:
+        pass
