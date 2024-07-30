@@ -1,6 +1,6 @@
 import streamlit as st
 from streamlit_navigation_bar import st_navbar
-from utils.connect import create_credentials
+from utils.connect import create_credentials, get_data
 from utils.page_functions import (
     set_sidebar,
     add_package_form,
@@ -10,10 +10,16 @@ from utils.page_functions import (
     delete_doctor_form,
     delete_admin_form,
 )
-from utils.connect import get_data
-from utils.crud import find_accountEmail, update_flag, update_use
+from utils.crud import (
+    find_accountEmail,
+    update_flag,
+    update_use,
+    update_ConfirmationTime,
+)
 import time
 import pandas as pd
+import pytz
+from datetime import datetime
 
 if "ID" not in st.session_state:
     time.sleep(1)
@@ -27,6 +33,8 @@ create_credentials()
 
 payment = get_data("Payment")
 package = get_data("Package")
+timezone = pytz.timezone("Asia/Ho_Chi_Minh")
+use_dict = {1: 2, 7: 3, 30: 4, 365: 5}
 
 if navbar == "Trang chủ":
     try:
@@ -97,7 +105,7 @@ if navbar == "Trang chủ":
                 "ID": "Mã số",
                 "Name": "Tên",
                 "Title": "Chức vụ",
-                "Spectiality": "Chuyên ngành",
+                "Speciality": "Chuyên ngành",
                 "Image": "Hình ảnh",
                 "Availability": "Ngày khám",
                 "TimeSlots": "Thời gian khám",
@@ -157,7 +165,9 @@ if navbar == "Trang chủ":
                         "Email_x",
                         "PackageID",
                         "Name_y",
+                        "Price",
                         "Time",
+                        "Confirmation",
                         "Link",
                     ]
                 ],
@@ -168,7 +178,9 @@ if navbar == "Trang chủ":
                     "Name_x": "Tên khách hàng",
                     "PackageID": "Mã gói",
                     "Name_y": "Tên gói",
-                    "Time": "Thời gian",
+                    "Price": "Giá",
+                    "Time": "Thời gian đặt hàng",
+                    "Confirmation": "Thời gian xác nhận",
                     "Link": "Hình ảnh",
                 },
             )
@@ -188,7 +200,9 @@ if navbar == "Trang chủ":
                         "Email_x",
                         "PackageID",
                         "Name_y",
+                        "Price",
                         "Time",
+                        "Confirmation",
                         "Link",
                     ]
                 ],
@@ -199,7 +213,9 @@ if navbar == "Trang chủ":
                     "Name_x": "Tên khách hàng",
                     "PackageID": "Mã gói",
                     "Name_y": "Tên gói",
-                    "Time": "Thời gian",
+                    "Price": "Giá",
+                    "Time": "Thời gian đặt hàng",
+                    "Confirmation": "Thời gian hủy",
                     "Link": "Hình ảnh",
                 },
             )
@@ -223,7 +239,7 @@ elif navbar == "Cập nhật":
 
             col5.write("Giá")
 
-            col6.write("Thời gian")
+            col6.write("Thời gian đặt hàng")
 
             col7.write("Link ảnh")
 
@@ -244,6 +260,11 @@ elif navbar == "Cập nhật":
                             package[package["ID"] == row["PackageID"]].iloc[0]["Price"]
                             + " VND"
                         )
+                        duration = int(
+                            package[package["ID"] == row["PackageID"]].iloc[0][
+                                "Duration"
+                            ]
+                        )
                     except:
                         price = None
 
@@ -256,8 +277,12 @@ elif navbar == "Cập nhật":
                     with col8:
                         acc_but = st.button("Xác nhận", key=row["ID"] + row["Time"])
                         if acc_but:
-                            update_flag(row["ID"])
-                            update_use(id=row["PatientID"], use=2)
+                            update_flag(id=row["ID"])
+                            update_use(id=row["PatientID"], use=use_dict[duration])
+                            Time = datetime.now(timezone).strftime("%Y-%m-%d %H:%M:%S")
+                            update_ConfirmationTime(
+                                id=row["PatientID"], Confirmation=Time
+                            )
                             time.sleep(1)
                             st.rerun()
 
@@ -267,6 +292,10 @@ elif navbar == "Cập nhật":
                         )
                         if del_but:
                             update_flag(row["ID"], flag=-1)
+                            Time = datetime.now(timezone).strftime("%Y-%m-%d %H:%M:%S")
+                            update_ConfirmationTime(
+                                id=row["PatientID"], Confirmation=Time
+                            )
                             time.sleep(1)
                             st.rerun()
     else:

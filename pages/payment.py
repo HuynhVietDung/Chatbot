@@ -27,7 +27,7 @@ navbar = st_navbar(
 if "Package" not in st.session_state:
     st.switch_page("./pages/page1.py")
 
-if navbar == "Đăng xuát":
+if navbar == "Đăng xuất":
     st.session_state.clear()
     st.switch_page("main.py")
 

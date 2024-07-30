@@ -7,27 +7,7 @@ from PIL import Image
 import os
 import string
 from utils.connect import get_data, get_image
-from utils.crud import (
-    create_patient_record,
-    create_account,
-    create_appointment,
-    cancel_appointment,
-    filter_appointment,
-    is_existed,
-    is_valid_email,
-    find_accountID,
-    update_account,
-    get_password,
-    hash_pass,
-    check_pass,
-    find_doctor_name,
-    find_role,
-    create_package,
-    delete_package,
-    create_doctor,
-    delete_account,
-    delete_doctor,
-)
+import utils.crud as crd
 
 
 def set_sidebar() -> None:
@@ -129,11 +109,11 @@ def register() -> None:
         # button submit
         submit = st.form_submit_button("Đăng ký")
         if submit:
-            if not is_existed(email2) and is_valid_email(email2) and flag:
+            if not crd.is_existed(email2) and crd.is_valid_email(email2) and flag:
                 time.sleep(0.5)
-                hash_pw = hash_pass(password)
-                create_account(id, email2, hash_pw)
-                create_patient_record(id, email2, name, age, phone, gender)
+                hash_pw = crd.hash_pass(password)
+                crd.create_account(id, email2, hash_pw)
+                crd.create_patient_record(id, email2, name, age, phone, gender)
 
                 st.session_state.ID = id
                 st.success("Đăng ký thành công")
@@ -169,9 +149,10 @@ def reset_password() -> None:
         submit = st.form_submit_button("Hoàn tất")
 
         if submit:
-            if is_existed(email) and password == new_pass:
-                id = find_accountID(email)
-                update_account(id, password=hash_pass(new_pass))
+            if crd.is_existed(email) and crd.password == new_pass:
+                crd.update_account(
+                    id=crd.find_accountID(email), password=crd.hash_pass(new_pass)
+                )
                 st.session_state.ID = id
 
                 time.sleep(1)
@@ -193,20 +174,20 @@ def login() -> None:
         submit = st.form_submit_button("Đăng nhập")
 
     if password != "" and email != "":
-        if is_valid_email(email):
+        if crd.is_valid_email(email):
             # check email
-            if is_existed(email):
+            if crd.is_existed(email):
                 # check password
-                actual_pass = get_password(email)
+                actual_pass = crd.get_password(email)
 
                 # encode password
-                if check_pass(password, actual_pass):
+                if crd.check_pass(password, actual_pass):
                     st.success("Đăng nhập thành công")
-                    user_id = find_accountID(email)
+                    user_id = crd.find_accountID(email)
                     time.sleep(0.5)
 
                     st.session_state.ID = user_id
-                    if find_role(user_id) == "admin":
+                    if crd.find_role(user_id) == "admin":
                         st.switch_page("./pages/admin.py")
                     else:
                         st.switch_page("./pages/page1.py")
@@ -415,7 +396,7 @@ def appointment() -> None:
             Time = str(date) + " " + selected_time
             Description = f"Triệu chứng: {symptoms}. Ghi chú: {notes}"
 
-            create_appointment(ID, PatientID, DoctorID, Time, Description)
+            crd.create_appointment(ID, PatientID, DoctorID, Time, Description)
 
             st.success(
                 f"Đặt lịch hẹn thành công với {doctor_name}."
@@ -478,7 +459,7 @@ def profile() -> None:
 
         ################# Appointment #################
         st.header("Lịch hẹn sắp tới 📥")
-        appointment = filter_appointment(st.session_state.ID)
+        appointment = crd.filter_appointment(st.session_state.ID)
 
         if not appointment.empty:
             convert_time = appointment["Time"].apply(
@@ -505,7 +486,7 @@ def profile() -> None:
 
                         col1.write(row["ID"])
 
-                        col2.write(find_doctor_name(row["DoctorID"]))
+                        col2.write(crd.find_doctor_name(row["DoctorID"]))
 
                         col3.write(row["Time"])
 
@@ -522,7 +503,7 @@ def profile() -> None:
                         with col6:
                             del_but = st.button("Hủy", key=row["ID"])
                             if del_but:
-                                cancel_appointment(row["ID"])
+                                crd.cancel_appointment(row["ID"])
                                 st.rerun()
             else:
                 st.info("Hiện không có lịch hẹn nào")
@@ -531,7 +512,7 @@ def profile() -> None:
 
         ################ Appointment History ################
         st.header("Lịch sử đặt hẹn")
-        appointment = filter_appointment(st.session_state.ID)
+        appointment = crd.filter_appointment(st.session_state.ID)
         if not appointment.empty:
             with st.container():
                 col1, col2, col3, col4 = st.columns(4)
@@ -550,7 +531,7 @@ def profile() -> None:
 
                     col1.write(row["ID"])
 
-                    col2.write(find_doctor_name(row["DoctorID"]))
+                    col2.write(crd.find_doctor_name(row["DoctorID"]))
 
                     col3.write(row["Time"])
 
@@ -567,20 +548,21 @@ def profile() -> None:
 
         if not payment.empty:
             with st.container():
-                col1, col2, col3, col4, col5 = st.columns(5)
+                col1, col2, col3, col4, col5, col6 = st.columns(6)
 
                 # write Header
                 col1.write("Mã đơn hàng")
                 col2.write("Tên sản phẩm")
                 col3.write("Giá")
-                col4.write("Thời gian")
-                col5.write("Tình trạng")
+                col4.write("Thời gian đặt hàng")
+                col5.write("Thời gian xác nhận")
+                col6.write("Tình trạng")
 
             # write contents
             for i, row in payment.iterrows():
                 with st.container():
                     # write contents
-                    col1, col2, col3, col4, col5 = st.columns(5)
+                    col1, col2, col3, col4, col5, col6 = st.columns(6)
 
                     col1.write(row["ID"])
                     try:
@@ -593,12 +575,14 @@ def profile() -> None:
 
                     col4.write(row["Time"])
 
+                    col5.write(row["Confirmation"])
+
                     if row["Flag"] == 0:
-                        col5.write(":orange[Đang xử lý]")
+                        col6.write(":orange[Đang xử lý]")
                     elif row["Flag"] == 1:
-                        col5.write(":green[Đã xác nhân]")
+                        col6.write(":green[Đã xác nhân]")
                     else:
-                        col5.write(":red[Xác nhận không thành công]")
+                        col6.write(":red[Xác nhận không thành công]")
         else:
             st.info("Chưa có giao dịch nào")
 
@@ -620,7 +604,7 @@ def add_package_form() -> None:
 
         option = st.selectbox(
             r"$\textsf{\normalsize Thời hạn}$:red[$\textsf{\normalsize *}$]",
-            ("Tuần", "Tháng", "Năm"),
+            ("Ngày", "Tuần", "Tháng", "Năm"),
         )
 
         price = st.text_input(
@@ -632,13 +616,21 @@ def add_package_form() -> None:
             r"$\textsf{\normalsize Mô tả tính năng}$:red[$\textsf{\normalsize *}$]",
             height=300,
         )
+        if option == "Ngày":
+            duration = 1
+        elif option == "Tuần":
+            duration = 7
+        elif option == "Tháng":
+            duration = 30
+        else:
+            duration = 365
 
         # button submit
         submit = st.form_submit_button("Thêm")
         if submit and st.session_state.form_state:
             try:
                 if name != "" and option != "" and price != "" and description != "":
-                    create_package(id, name, price, description)
+                    crd.create_package(id, name, price, description, duration)
 
                     st.success("Thêm gói thành công")
 
@@ -661,18 +653,19 @@ def delete_package_form() -> None:
 
     if not package.empty:
         with st.container():
-            col1, col2, col3, col4, col5 = st.columns([1, 1, 2, 3, 1])
+            col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 1, 1, 3, 1])
 
             # write Header
             col1.write("Mã gói")
             col2.write("Tên gói")
             col3.write("Giá")
-            col4.write("Mô tả")
+            col4.write("Thời hạn")
+            col5.write("Mô tả")
 
         for i, row in package.iterrows():
             with st.container():
                 # write contents
-                col1, col2, col3, col4, col5 = st.columns([1, 1, 2, 3, 1])
+                col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 1, 1, 3, 1])
                 with col1:
                     st.write(f'{row["ID"]}')
                 with col2:
@@ -680,19 +673,20 @@ def delete_package_form() -> None:
                 with col3:
                     st.write(f'{row["Price"]}')
                 with col4:
-                    st.write(f'{row["Description"]}')
+                    st.write(f'{row["Duration"]}')
                 with col5:
+                    st.write(f'{row["Description"]}')
+                with col6:
                     del_but = st.button("Hủy", key=row["ID"])
-                if del_but:
-                    delete_package(row["ID"])
-                    st.success("Hủy gói thành công")
-                    try:
-                        del st.session_state.form2_state
-                    except:
-                        pass
-                    time.sleep(1)
-                    st.rerun()
-
+                    if del_but:
+                        crd.delete_package(row["ID"])
+                        st.success("Hủy gói thành công")
+                        try:
+                            del st.session_state.form2_state
+                        except:
+                            pass
+                        time.sleep(1)
+                        st.rerun()
     else:
         st.info("Hiện không có gói nào")
 
@@ -727,9 +721,9 @@ def add_admin() -> None:
         # button submit
         submit = st.form_submit_button("Đăng ký")
         if submit:
-            if not is_existed(email2) and is_valid_email(email2) and flag:
-                hash_pw = hash_pass(password)
-                create_account(id, email2, hash_pw, role="admin")
+            if not crd.is_existed(email2) and crd.is_valid_email(email2) and flag:
+                hash_pw = crd.hash_pass(password)
+                crd.create_account(id, email2, hash_pw, role="admin")
 
                 st.session_state.ID = id
                 st.success("Đăng ký thành công")
@@ -786,7 +780,7 @@ def add_doctor() -> None:
         # button submit
         submit = st.form_submit_button("Đăng ký")
         if submit:
-            create_doctor(id, name, title, spec, image, avai, time_slot)
+            crd.create_doctor(id, name, title, spec, image, avai, time_slot)
             st.success("Đăng ký thành công")
             try:
                 del st.session_state.form4_state
@@ -836,7 +830,7 @@ def delete_admin_form() -> None:
 
                 if del_but:
                     if row["Email"] != "admin1@gmail.com":
-                        delete_account(row["ID"])
+                        crd.delete_account(row["ID"])
                         st.success("Xóa thành công")
                         try:
                             del st.session_state.form5_state
@@ -881,7 +875,7 @@ def delete_doctor_form() -> None:
                     del_but = st.button("Xóa", key=row["Name"])
 
                 if del_but:
-                    delete_doctor(row["ID"])
+                    crd.delete_doctor(row["ID"])
                     st.success("Xóa thành công")
                     try:
                         del st.session_state.form6_state

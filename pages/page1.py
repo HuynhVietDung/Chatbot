@@ -3,7 +3,7 @@ from streamlit_navigation_bar import st_navbar
 from utils.connect import create_credentials
 from utils.page_functions import home, search_drugs, appointment, profile, set_sidebar
 from utils.chat import chatbot
-from utils.payment import payment
+from utils.payment import payment, update_payment
 
 st.set_page_config(page_title="Doctor AI", page_icon="👨‍🔬", layout="wide")
 
@@ -24,6 +24,8 @@ navbar = st_navbar(
     ],
     selected=st.session_state.default_page,
 )
+
+update_payment(st.session_state.ID)
 
 if navbar == "Trang chủ":
     home()

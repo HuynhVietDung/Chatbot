@@ -176,11 +176,13 @@ def delete_doctor(ID: str) -> None:
 
 
 ######################## Package ########################
-def create_package(id: str, name: str, price: str, description: str) -> None:
+def create_package(
+    id: str, name: str, price: str, description: str, duration: int
+) -> None:
     package_sheet = get_sheet("Package")
 
     idx = len(package_sheet.get_all_values()) + 1
-    package_sheet.insert_row([id, name, price, description, 1], idx)
+    package_sheet.insert_row([id, name, price, description, 1, duration], idx)
 
 
 def find_packageID(name: str) -> str:
@@ -211,15 +213,29 @@ def delete_package(ID: str) -> None:
 
 
 ######################## Payment ########################
-
-
 def create_payment(
-    id: str, PatientID: str, Email: str, PackageID: str, Time: str, link: str
+    id: str,
+    PatientID: str,
+    Email: str,
+    PackageID: str,
+    Time: str,
+    link: str,
 ) -> None:
     package_sheet = get_sheet("Payment")
 
     idx = len(package_sheet.get_all_values()) + 1
-    package_sheet.insert_row([id, PatientID, PackageID, Email, Time, link, 0], idx)
+    package_sheet.insert_row([id, PatientID, PackageID, Email, Time, link, "", 0], idx)
+
+
+def update_ConfirmationTime(
+    id: str,
+    Confirmation: str,
+) -> None:
+    package_sheet = get_sheet("Payment")
+
+    if len(package_sheet.get_all_values()) > 1:
+        row_idx = package_sheet.find(id).row
+        package_sheet.update_cell(row_idx, 7, Confirmation)
 
 
 def update_flag(id: str, flag=1) -> None:
@@ -227,4 +243,4 @@ def update_flag(id: str, flag=1) -> None:
 
     if len(package_sheet.get_all_values()) > 1:
         row_idx = package_sheet.find(id).row
-        package_sheet.update_cell(row_idx, 7, flag)
+        package_sheet.update_cell(row_idx, 8, flag)

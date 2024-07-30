@@ -122,7 +122,7 @@ def chatbot():
                             st.write("Bạn vui lòng thanh toán để được tư vấn tiếp.")
                             payment()
 
-        if use == 2:
+        if use >= 2:
             if (
                 "messages" not in st.session_state.keys()
             ):  # Initialize the chat message history
