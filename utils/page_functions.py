@@ -149,7 +149,7 @@ def reset_password() -> None:
         submit = st.form_submit_button("Hoàn tất")
 
         if submit:
-            if crd.is_existed(email) and crd.password == new_pass:
+            if crd.is_existed(email) and password == new_pass:
                 crd.update_account(
                     id=crd.find_accountID(email), password=crd.hash_pass(new_pass)
                 )
