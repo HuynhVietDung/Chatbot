@@ -38,32 +38,34 @@ def payment() -> None:
 
 
 def update_payment(id: str) -> None:
-
     all_payment = get_data("Payment")
-    individual_payment = all_payment[
-        (all_payment["PatientID"] == id) & (all_payment["Flag"] == 1)
-    ].iloc[0]
+    if id in all_payment["PatientID"].values:
+        individual_payment = all_payment[
+            (all_payment["PatientID"] == id) & (all_payment["Flag"] == 1)
+        ].iloc[0]
 
-    # Check duration
-    if not individual_payment.empty:
-        package = get_data("Package")
-        duration = int(
-            package[
-                (package["IsUsed"] == 1)
-                & (package["ID"] == individual_payment["PackageID"])
-            ].iloc[0]["Duration"]
-        )
+        # Check duration
+        if not individual_payment.empty:
+            package = get_data("Package")
+            duration = int(
+                package[
+                    (package["IsUsed"] == 1)
+                    & (package["ID"] == individual_payment["PackageID"])
+                ].iloc[0]["Duration"]
+            )
 
-        try:
-            # Parse the datetime string into a datetime object
-            exp_date = datetime.strptime(
-                individual_payment["Confirmation"], "%Y-%m-%d %H:%M:%S"
-            ) + timedelta(days=duration)
+            try:
+                # Parse the datetime string into a datetime object
+                exp_date = datetime.strptime(
+                    individual_payment["Confirmation"], "%Y-%m-%d %H:%M:%S"
+                ) + timedelta(days=duration)
 
-            if datetime.now() > exp_date:
-                update_flag(id=individual_payment["ID"], flag=-2)  # -2 means expiration
-                update_use(
-                    id=individual_payment["PatientID"], use=0
-                )  # 0 mean normal account
-        except:
-            pass
+                if datetime.now() > exp_date:
+                    update_flag(
+                        id=individual_payment["ID"], flag=-2
+                    )  # -2 means expiration
+                    update_use(
+                        id=individual_payment["PatientID"], use=0
+                    )  # 0 mean normal account
+            except:
+                pass
