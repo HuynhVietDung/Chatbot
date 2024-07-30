@@ -279,10 +279,9 @@ elif navbar == "Cập nhật":
                         if acc_but:
                             update_flag(id=row["ID"])
                             update_use(id=row["PatientID"], use=use_dict[duration])
+
                             Time = datetime.now(timezone).strftime("%Y-%m-%d %H:%M:%S")
-                            update_ConfirmationTime(
-                                id=row["PatientID"], Confirmation=Time
-                            )
+                            update_ConfirmationTime(id=row["ID"], Confirmation=Time)
                             time.sleep(1)
                             st.rerun()
 
@@ -292,10 +291,9 @@ elif navbar == "Cập nhật":
                         )
                         if del_but:
                             update_flag(row["ID"], flag=-1)
+
                             Time = datetime.now(timezone).strftime("%Y-%m-%d %H:%M:%S")
-                            update_ConfirmationTime(
-                                id=row["PatientID"], Confirmation=Time
-                            )
+                            update_ConfirmationTime(id=row["ID"], Confirmation=Time)
                             time.sleep(1)
                             st.rerun()
     else:
