@@ -1,7 +1,6 @@
-###  AI Consultant Chatbot Web Application
+###  Chatbot
 
-This project aims to build a chatbot as an consultant in healthcare using LLM and Streamlit for writing  web app and deployment.
+This project aims to build a chatbot as an consultant in healthcare using LLM and Streamlit
 
-Website URL: https://doctoraichatbot.streamlit.app/ 
  
 
