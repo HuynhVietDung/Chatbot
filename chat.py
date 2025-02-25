@@ -8,7 +8,7 @@ from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.document_loaders.csv_loader import CSVLoader
 from langchain.chains.question_answering import load_qa_chain
 
-GOOGLE_API_KEY = "AIzaSyAg6sNPBJv5z_EVhxDTO7n0hAYjrVDSTw4"
+GOOGLE_API_KEY = ""
 
 def chatbot():
     @st.cache_resource(ttl="1d")
